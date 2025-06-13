@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Aldrich&display=swap");
+.chat {
+     width: 80%;
+     background: linear-gradient(135deg, #2a35d3, #95a1d8);
+
+     margin: -20px 0px 0px -8px;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+     &__info {
+          align-self: center;
+          margin-top: 35vh;
+          background-color: aliceblue;
+          width: 22%;
+          height: 30px;
+          padding: 5px 5px 5px 5px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 15px;
+     }
+}
+.chatMain {
+     display: flex;
+     flex-direction: row;
+     height: 100%;
+}
+html {
+     font-family: "Aldrich", sans-serif;
+     font-weight: 400;
+     font-style: normal;
+     overflow: hidden;
+}

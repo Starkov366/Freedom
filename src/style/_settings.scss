@@ -1,0 +1,171 @@
+.settings {
+     width: 21.8%;
+     margin: -10px -20px -5px 0px;
+     height: 100vh;
+     display: flex;
+     margin-left: auto;
+     flex-direction: column;
+     align-items: center;
+     background: linear-gradient(90deg, #121959, #172179, #384194);
+     animation: openMenus 0.12s linear normal;
+     color: white;
+
+     font-weight: 600;
+     &__profileSection {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 15px;
+          width: 100%;
+
+          border-bottom: 2px solid black;
+          background-color: #192377;
+     }
+     &__btns {
+          margin-top: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          padding: 5px 5px 5px 5px;
+          animation: itemMenus 1s ease normal;
+     }
+     &__imageProfile {
+          width: 7vw;
+          height: 7vw;
+          border-radius: 50%;
+          margin-top: 12px;
+     }
+
+     &__profileName {
+     }
+     &__profileEmail {
+          margin-bottom: 5px;
+     }
+
+     &__profileBtn {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+     &__profileBtn:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
+     }
+
+     &__profileBtnText {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+     }
+
+     &__newGroupBtn {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+     &__newGroupBtn:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
+     }
+     &__newGroupBtnText {
+     }
+
+     &__newChannelBtn {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+
+     &__newChannelBtn:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
+     }
+
+     &__nightMode {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+
+     &__nightMode:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
+     }
+
+     &__nightModeBtnText {
+     }
+
+     &__friends {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+
+     &__friends:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
+     }
+
+     &__checkFriendBtnText {
+     }
+
+     &__savedMessages {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+     &__savedMessages:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
+     }
+
+     &__savedMessagesBtnText {
+     }
+
+     &__infoAboutApp {
+          margin-top: auto;
+          margin-left: auto;
+          margin-right: 20px;
+          padding: 0px 5px 5px 0px;
+     }
+}
+@keyframes openMenus {
+     0% {
+          transform: translateX(100%);
+          visibility: hidden;
+     }
+     50% {
+          visibility: visible;
+          transform: translateX(50%);
+     }
+     100% {
+          transform: translateX(0%);
+     }
+}
+@keyframes itemMenus {
+     0% {
+          visibility: hidden;
+     }
+
+     100% {
+          visibility: visible;
+     }
+}

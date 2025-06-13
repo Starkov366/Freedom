@@ -1,0 +1,64 @@
+.headerMessageMenu {
+     min-height: 75px;
+     max-height: 75px;
+     background-color: #7a85c4;
+     color: #ffffff;
+     border: none;
+     border-radius: 8px;
+
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     justify-content: space-around;
+
+     &__burgerMenu {
+          width: 35px;
+          height: 30px;
+          padding: 5px 5px 5px 5px;
+          background: url("../../public/icons/burgerMenu.png") no-repeat center / cover;
+          border: none;
+          align-self: flex-end;
+          margin-bottom: 10px;
+     }
+     &__burgerMenu:hover {
+          background-color: #a0a0aaa1;
+          border-radius: 1px;
+     }
+     &__inputSearch {
+          width: 60%;
+          position: relative;
+          align-self: flex-start;
+     }
+     &__input {
+          width: 100%;
+          height: 40px;
+          border: none;
+          border-bottom-right-radius: 17px;
+          border-bottom-left-radius: 17px;
+          outline: none;
+     }
+     &__input::placeholder {
+          padding: 10px 0px 0px 10px;
+     }
+     &__inputSearchDelete {
+          position: absolute;
+          background: url("../../public/icons/delete.png") no-repeat center / cover;
+          width: 30px;
+          height: 30px;
+          top: 35%;
+          left: 85%;
+     }
+     &__profile {
+          width: 40px;
+          height: 40px;
+          background: url("../../public/icons/user.png") no-repeat center / cover;
+          border: none;
+          align-self: flex-end;
+          margin-bottom: 5px;
+     }
+     &__profile:hover {
+          background-color: #a0a0aaa1;
+          border-radius: 1px;
+          border-radius: 15px;
+     }
+}

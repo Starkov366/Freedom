@@ -1,0 +1,106 @@
+.createNewWindow {
+     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+     width: 30%;
+     position: absolute;
+     left: 35%;
+     top: 35vh;
+     height: 200px;
+     display: flex;
+     flex-direction: column;
+     align-items: start;
+     border-radius: 15px;
+     justify-content: start;
+     padding: 10px 10px 10px 10px;
+     box-shadow: 20px 20px 1000px 10px white;
+     &__header {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-around;
+          margin-left: 10px;
+          margin-top: 5px;
+          &Img {
+               width: 100px;
+               height: 100px;
+               border-radius: 50%;
+          }
+     }
+
+     &__infoTitle {
+          display: flex;
+          flex-direction: column;
+          margin-left: 25px;
+
+          &Label {
+               font-size: 25px;
+               color: #1100ff;
+               font-weight: 700;
+          }
+
+          &Input {
+               background: transparent;
+               outline: none;
+               border: none;
+               border-bottom: 3px solid rgb(181, 181, 185);
+               height: 17px;
+               width: 70%;
+               color: #1100ff;
+               font-weight: 900;
+               font-size: 16px;
+               font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif sans-serif;
+          }
+     }
+
+     &__description {
+          background: transparent;
+          outline: none;
+          border: none;
+          border-bottom: 3px solid rgb(181, 181, 185);
+          height: 17px;
+          width: 50%;
+          margin-top: 20px;
+          margin-left: 10px;
+          color: #1100ff;
+          font-weight: 900;
+          font-size: 16px;
+          font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif sans-serif;
+     }
+
+     &__btns {
+          margin-top: auto;
+          align-self: flex-end;
+          margin-right: 10px;
+          display: flex;
+          gap: 10px;
+          &Cancel {
+               font-size: 22px;
+               border: none;
+               background: transparent;
+               color: #fdfdfd;
+               font-weight: 600;
+               transition: color 0.2s ease-out;
+               transition: background 0.2s ease-out;
+               font-size: 25px;
+               border-radius: 15px;
+          }
+
+          &Acess {
+               font-size: 22px;
+               border: none;
+               background: transparent;
+               color: #fdfdfd;
+               font-weight: 600;
+               font-size: 25px;
+               border-radius: 15px;
+          }
+          &Cancel:hover {
+               color: #000000;
+               background: #ffffff81;
+          }
+
+          &Acess:hover {
+               color: #000000;
+               background: #d4cccc81;
+          }
+     }
+}

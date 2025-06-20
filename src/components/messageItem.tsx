@@ -5,9 +5,11 @@ export type typeMessage = {
      title: string;
      lastUserName: string;
      value: string;
-     lastMessageDate: Date;
+     lastMessageDate: string;
      flagCheck: boolean;
      chatId: string;
+     chatImage: string;
+     messageImage: string;
 };
 const MessageItem: React.FC<typeMessage> = ({
      lastSendImg,
@@ -16,24 +18,34 @@ const MessageItem: React.FC<typeMessage> = ({
      value,
      lastMessageDate,
      flagCheck,
-     chatId
+     chatId,
+     chatImage,
+     messageImage
 }) => {
      return (
-          <div className="messageMenu__item">
-               <img className="messageMenu__itemImg" src={lastSendImg}></img>
-               <div className="messageMenu__itemInfo">
-                    <Link style={{ textDecoration: "none" }} href={chatId}>
+          <Link style={{ textDecoration: "none", color: "black" }} href={chatId}>
+               <div className="messageMenu__item">
+                    <img className="messageMenu__itemImg" src={lastSendImg}></img>
+                    <div className="messageMenu__itemInfo">
                          <span className="messageMenu__itemInfoTitle">{title}</span>
-                         <span className="messageMenu__itemInfoUserName">{lastUserName}: </span>
-                         <span className="messageMenu__itemInfoValue">{value}</span>
-                         <span className="messageMenu__itemInfoDate">{11}</span>
+                         <span className="messageMenu__itemInfoUserName">
+                              {lastUserName + ":  "}
+                         </span>
+                         <span className="messageMenu__itemInfoValue">
+                              {value?.length > 18
+                                   ? value.slice(0, 17) + "..."
+                                   : " " + value + messageImage}
+                         </span>
+                         <span className="messageMenu__itemInfoDate">
+                              {lastMessageDate?.slice(16, 21)}
+                         </span>
                          <div
                               className="messageMenu__itemInfoCheck"
                               style={{ backgroundColor: flagCheck ? "#4f0" : "#c0c25b" }}
                          ></div>
-                    </Link>
+                    </div>
                </div>
-          </div>
+          </Link>
      );
 };
 export default MessageItem;

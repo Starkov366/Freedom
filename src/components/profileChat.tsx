@@ -11,7 +11,7 @@ type typeHeaderProfile = {
 };
 const HeaderProfile: React.FC<typeHeaderProfile> = ({
      name,
-     img = "#",
+     img = "",
      statusInfo,
      lastStatus,
      profileOpen,
@@ -20,10 +20,11 @@ const HeaderProfile: React.FC<typeHeaderProfile> = ({
      return (
           <div onClick={() => setProfileOpen(!profileOpen)} className="headerChatBox__profile">
                <div className="headerChatBox__profileCircle">
-                    <img
-                         className="headerChatBox__profileImage"
-                         src={img ?? "../../public/icons/background.png"}
-                    />
+                    {img ? (
+                         <img className="headerChatBox__profileImage" src={img} />
+                    ) : (
+                         <span></span>
+                    )}
                     <div
                          style={{
                               width: "12px",
@@ -36,7 +37,7 @@ const HeaderProfile: React.FC<typeHeaderProfile> = ({
                <div className="headerChatBox__profileInfo">
                     <h1 className="headerChatBox__name">{name}</h1>
                     <p className="headerChatBox__statusInfo">
-                         {statusInfo ? "В сети" : `Был в сети : ${lastStatus}`}
+                         {statusInfo ? "Online" : `Был в сети : ${lastStatus}`}
                     </p>
                </div>
           </div>

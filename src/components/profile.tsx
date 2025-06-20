@@ -1,5 +1,5 @@
 "use client";
-import React, { ElementType } from "react";
+import React, { ChangeEvent, ElementType } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { MdOutlineEdit } from "react-icons/md";
 import { MdOutlineMailOutline } from "react-icons/md";
@@ -7,6 +7,10 @@ import { GrStatusInfo } from "react-icons/gr";
 import { FaInstagram } from "react-icons/fa";
 import PolyComponent from "./polyComponent";
 import { BsTelegram } from "react-icons/bs";
+import { RootState, RootDispatch } from "@/StateManagment/store";
+import { UseDispatch, useDispatch } from "react-redux";
+import { setUpdateUserInfo } from "@/StateManagment/appSlice";
+
 import image from "../../public/icons/background.png";
 type ProfileProps = {
      setProfileOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,6 +29,13 @@ type ProfileProps = {
      as: ElementType;
      owner?: boolean;
 };
+enum TYPES {
+     "description" = "description",
+     "email" = "email",
+     "telegram" = "telegram",
+     "instagram" = "instagram",
+     "userId" = "userId"
+}
 const Profile = ({
      setProfileOpen,
      name,
@@ -50,6 +61,29 @@ const Profile = ({
           instagram: instagram,
           img: img
      });
+     const dispatch: RootDispatch = useDispatch();
+     const handleChangeData = (event: React.ChangeEvent<HTMLInputElement>) => {
+          const input = event.target;
+          const type = input.dataset.type as string;
+          const value = input.value;
+          console.log(
+               type,
+               value,
+               "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+          );
+          setValue((prevState) => {
+               const newState = {
+                    ...prevState,
+                    [type]: value
+               };
+
+               return newState;
+          });
+     };
+     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+          dispatch(setUpdateUserInfo({ userInfo: values }));
+     };
+
      return (
           <div className="profile">
                <div className="profile__topInfo">
@@ -92,7 +126,10 @@ const Profile = ({
                     <div className="profile__infoDescription">
                          <div className="profile__infoDescriptionInner">
                               <PolyComponent
-                                   as={as}
+                                   onChange={(event: any) => handleChangeData(event)}
+                                   onBlur={(event: any) => handleBlur(event)}
+                                   data-type={TYPES.description}
+                                   as={edit ? "input" : "p"}
                                    value={values.description}
                                    className="profile__infoDescriptionInnerInput"
                               >
@@ -105,6 +142,9 @@ const Profile = ({
                          <div className="profile__infoUserIdInner">
                               <p className="profile__infoUserIdInnerLabel">Looser ID</p>
                               <PolyComponent
+                                   onChange={(event: any) => handleChangeData(event)}
+                                   onBlur={(event: any) => handleBlur(event)}
+                                   data-type={TYPES.userId}
                                    as={as}
                                    value={values.userId}
                                    className="profile__infoUserIdInnerInput"
@@ -122,6 +162,9 @@ const Profile = ({
                          <div className="profile__infoEmailInner">
                               <p className="profile__infoEmailInnerLabel">Email</p>
                               <PolyComponent
+                                   onChange={(event: any) => handleChangeData(event)}
+                                   onBlur={(event: any) => handleBlur(event)}
+                                   data-type={TYPES.email}
                                    as={as}
                                    value={values.email}
                                    className="profile__infoEmailInnerInput"
@@ -135,6 +178,9 @@ const Profile = ({
                          <div className="profile__infoTelegramInner">
                               <p className="profile__infoTelegramInnerLabel">Telegram</p>
                               <PolyComponent
+                                   onChange={(event: any) => handleChangeData(event)}
+                                   onBlur={(event: any) => handleBlur(event)}
+                                   data-type={TYPES.telegram}
                                    as={as}
                                    value={values.telegram}
                                    className="profile__infoTelegramInnerInput"
@@ -148,6 +194,9 @@ const Profile = ({
                          <div className="profile__infoInstagramInner">
                               <p className="profile__infoInstagramInnerLabel">Instagram</p>
                               <PolyComponent
+                                   onChange={(event: any) => handleChangeData(event)}
+                                   onBlur={(event: any) => handleBlur(event)}
+                                   data-type={TYPES.instagram}
                                    as={as}
                                    value={values.instagram}
                                    className="profile__infoInstagramInnerInput"

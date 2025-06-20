@@ -5,6 +5,7 @@ import Profile from "./profileChat";
 import ProfileMain from "./profile";
 import back from "../../public/icons/background.png";
 import HeaderMessageMenu from "./messageHeaderMenu";
+import SearchInput from "./searchInput";
 import { Chats, UserInterface } from "@/StateManagment/appSlice";
 
 type typeHeaderChatBox = {
@@ -27,7 +28,8 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                const element = event.target as HTMLElement;
                if (
                     !element.closest(".headerChatBox__toolbarMenu") &&
-                    !element.closest(".headerChatBox__search")
+                    !element.closest(".headerChatBox__search") &&
+                    !element.closest(".chatBox__galleryBack")
                ) {
                     setIsOpenMenu(false);
                }
@@ -63,7 +65,7 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                ></Profile>
 
                <div className="headerChatBox__toolbar">
-                    {isSearch ? <input className="headerChatBox__searchInput"></input> : null}
+                    {isSearch ? <SearchInput targetChat={targetChat}></SearchInput> : null}
                     <button
                          onClick={() => setIsSearch(!isSearch)}
                          className="headerChatBox__moreOptions"
@@ -75,7 +77,11 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                     ></button>
                </div>
                {isOpenMenu ? (
-                    <HeaderMessageMenu setProfileOpen={setProfileOpen}></HeaderMessageMenu>
+                    <HeaderMessageMenu
+                         targetChat={targetChat}
+                         id={targetChat?.chatId}
+                         setProfileOpen={setProfileOpen}
+                    ></HeaderMessageMenu>
                ) : null}
                {profileOpen ? (
                     <NewProfile

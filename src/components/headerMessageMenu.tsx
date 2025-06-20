@@ -2,6 +2,8 @@
 import React from "react";
 import ProfileHOC from "./profileHOC";
 import Profile from "./profile";
+import { useSelector } from "react-redux";
+import { RootState } from "../StateManagment/store";
 const HeaderMessageMenu = ({
      isOpen,
      setIsOpen
@@ -9,6 +11,7 @@ const HeaderMessageMenu = ({
      isOpen: boolean;
      setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+     const user = useSelector((store: RootState) => store.User);
      const [value, setValue] = React.useState<string>("");
      const [profileOpen, setProfileOpen] = React.useState<boolean>(false);
      const [edit, setEdit] = React.useState<boolean>(false);
@@ -30,7 +33,7 @@ const HeaderMessageMenu = ({
                     <input
                          onChange={(event) => handleSetValue(event)}
                          type="text"
-                         placeholder="поиск"
+                         placeholder="search"
                          className="headerMessageMenu__input"
                          value={value}
                     ></input>
@@ -47,17 +50,18 @@ const HeaderMessageMenu = ({
                ></button>
                {profileOpen ? (
                     <NewProfile
-                         email="valuznnicartem@gmail.com"
-                         name="starkov"
-                         countFriends={0}
-                         countGroups={0}
-                         description="Описание... :3"
-                         userId="@zaldyzhizhi"
-                         telegram="https://qwdqwdwqdqwqwd"
-                         instagram="https://qwdqwdwqdqwqwd"
+                         key={Math.random()}
+                         email={user.userEmail}
+                         name={user.userName}
+                         countFriends={user.userFriends.length}
+                         countGroups={user.userGroups}
+                         description={user.userDescription}
+                         userId={user.userId}
+                         telegram={user.userTelegramInfo}
+                         instagram={user.userInstagramInfo}
                          setProfileOpen={setProfileOpen}
                          setEdit={setEdit}
-                         img="#"
+                         img={user.userImage}
                          owner={true}
                          as={edit ? "input" : "p"}
                     ></NewProfile>

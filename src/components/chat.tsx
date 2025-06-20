@@ -9,12 +9,12 @@ import Profile from "./profile";
 import CreateNewWindow from "./createNewWindow";
 import { UserInterface } from "@/StateManagment/appSlice";
 import { RootState } from "../StateManagment/store";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 
 type typeChatBox = { user?: UserInterface; fullfield: boolean };
 const Chat: React.FC<typeChatBox> = ({ fullfield }) => {
      const [isOpen, setIsOpen] = React.useState<boolean>(false);
-     const user = useSelector((store: RootState) => store.User) as UserInterface;
+     const user = useSelector((store: RootState) => store.User, shallowEqual) as UserInterface;
      React.useEffect(() => {
           const handleClose = (event: any) => {
                const element = event.target as HTMLElement;
@@ -31,7 +31,11 @@ const Chat: React.FC<typeChatBox> = ({ fullfield }) => {
      }, []);
      return (
           <div className="chatMain">
-               <ChatWindow fullfield={fullfield} user={user}></ChatWindow>
+               <ChatWindow
+                    key={user?.userChats.length}
+                    fullfield={fullfield}
+                    user={user}
+               ></ChatWindow>
 
                {!isOpen ? (
                     <MessageMenu isOpen={isOpen} setIsOpen={setIsOpen}></MessageMenu>

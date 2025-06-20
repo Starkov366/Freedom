@@ -124,18 +124,29 @@
           margin-left: 20px;
      }
 
+     &__nullMessage {
+          background-color: #ffffff;
+          width: 160px;
+          height: 20px;
+          margin-left: 35vw;
+          margin-top: 35vh;
+          text-align: center;
+          border-radius: 10px;
+          user-select: none;
+     }
      &__item {
           width: 39.8%;
-          height: 40px;
+          min-height: 35px;
           background: white;
           position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 5px 5px 5px 5px;
+          padding: 8px 8px 8px 8px;
           border-top-right-radius: 20px;
           border-top-left-radius: 20px;
           border-bottom-right-radius: 20px;
+          flex-shrink: 0;
 
           &RightInfo {
                width: 20%;
@@ -145,7 +156,7 @@
                align-items: center;
                gap: 10px;
                margin-left: auto;
-               margin-right: -10px;
+               margin-right: 5px;
           }
 
           &LeftInfo {
@@ -154,7 +165,7 @@
                flex-direction: column;
                justify-content: center;
                align-items: center;
-               gap: 10px;
+               gap: 5px;
                margin-right: auto;
                margin-left: -10px;
           }
@@ -163,18 +174,26 @@
                margin-right: auto;
                font-weight: 500;
                margin-left: 20px;
+               min-width: 310px;
+               word-break: break-all;
+               line-height: 25px;
+               user-select: text;
+          }
+          &Value::selection {
+               background-color: rgb(255, 0, 221);
           }
           &Author {
                color: rgb(165, 167, 167);
                align-self: flex-start;
                margin-left: 15px;
-               margin-bottom: 5px;
+               margin-bottom: 10px;
+
                height: 10px;
           }
 
           &Like {
                position: absolute;
-               left: 31vw;
+               left: 31.7vw;
                top: 3vh;
                transform: rotate(20deg);
                user-select: none;
@@ -210,12 +229,34 @@
 
           margin-bottom: auto;
      }
+     &__itemImageArray {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin-top: -30px;
+          gap: 5px;
+
+          &Item {
+               width: 32vw;
+               height: 35vh;
+               border-top-left-radius: 5px;
+               border-bottom-left-radius: 10px;
+               border-bottom-right-radius: 10px;
+               object-position: center;
+               object-fit: cover;
+          }
+     }
      &__payload {
           display: flex;
-          gap: 10px;
-          max-width: 100%;
+          gap: 5px;
+          position: absolute;
+          top: 75.4vh;
+          left: 0vw;
+          width: 79.5vw;
           overflow-x: auto;
-          overflow-y: hidden;
+          flex-wrap: nowrap;
+          background-color: #0f20271f;
      }
 
      &__payload::-webkit-scrollbar-track {
@@ -225,8 +266,8 @@
           background-color: rgb(255, 145, 0);
      }
      &__payload::-webkit-scrollbar {
-          width: 5px;
-          height: 8px;
+          width: 10px;
+          height: 10px;
      }
      &__stickerMenu {
           position: absolute;
@@ -246,6 +287,7 @@
           justify-content: end;
           flex-wrap: wrap;
           animation: 0.27s sticker linear normal;
+
           &Item {
                min-width: 20px;
                min-height: 20px;
@@ -270,6 +312,80 @@
           width: 5px;
 
           height: 8px;
+     }
+
+     &__gallery {
+          width: 30vw;
+          height: 70vh;
+          background: linear-gradient(90deg, #121959, #172179, #505bb9);
+          position: absolute;
+          top: 5vh;
+          left: -32vw;
+          display: flex;
+          flex-direction: column;
+          align-items: space-between;
+          justify-content: flex-start;
+          border-radius: 10px;
+          padding: 5px 15px 0px 15px;
+          overflow-y: auto;
+          overflow-x: hidden;
+          &Header {
+               display: flex;
+               flex-direction: row;
+               justify-content: space-between;
+
+               // ...
+          }
+          &Back:hover {
+               background-color: #172179;
+               border-radius: 10px;
+          }
+          &Close:hover {
+               background-color: #172179;
+               border-radius: 10px;
+          }
+          &Title {
+               font-size: 35px;
+               color: rgb(190, 190, 189);
+          }
+          &Inner {
+               display: flex;
+               flex-direction: row;
+               flex-wrap: wrap;
+               justify-content: flex-start;
+               width: 101%;
+               gap: 3px;
+               margin-top: 10px;
+
+               &Item {
+                    width: 7vw;
+                    height: 7vw;
+                    object-fit: cover;
+                    opacity: 0.7;
+                    object-position: center;
+                    border: 2px solid white;
+                    &Title {
+                         align-self: flex-start;
+                         font-size: 20px;
+                    }
+                    &Container {
+                         margin-right: auto;
+                    }
+               }
+               &Item:hover {
+                    opacity: 1;
+               }
+          }
+     }
+     &__gallery::-webkit-scrollbar {
+          width: 7px;
+          height: 10px;
+     }
+     &__gallery::-webkit-scrollbar-thumb {
+          background-color: #121959;
+     }
+     &__gallery::-webkit-scrollbar-track {
+          background-color: rgb(255, 255, 255);
      }
 }
 @keyframes sticker {

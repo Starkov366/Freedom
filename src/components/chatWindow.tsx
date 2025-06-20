@@ -5,7 +5,7 @@ import { UserInterface } from "@/StateManagment/appSlice";
 import { useParams } from "next/navigation";
 import { DuoChat } from "@/StateManagment/appSlice";
 import type { Chats } from "@/StateManagment/appSlice";
-type typeChatBox = { user: UserInterface; fullfield: boolean };
+type typeChatBox = { user: UserInterface; fullfield: boolean; key: number };
 const ChatWindow: React.FC<typeChatBox> = ({ user, fullfield }) => {
      const id = useParams();
      console.log(id);
@@ -16,7 +16,7 @@ const ChatWindow: React.FC<typeChatBox> = ({ user, fullfield }) => {
      } {
           let outName: number = 0;
           const targetChat: Chats[] = user.userChats?.filter(
-               (chat: Chats) => chat.chatId === id.chatId
+               (chat: Chats) => chat?.chatId === id.chatId
           );
 
           if (targetChat?.[0]?.joinUsers && !Array.isArray(targetChat[0].joinUsers!)) {
@@ -50,7 +50,11 @@ const ChatWindow: React.FC<typeChatBox> = ({ user, fullfield }) => {
                          <p>Select chat to start messaging</p>
                     </div>
                ) : null}
-               <ChatBox fullfield={fullfield}></ChatBox>
+               <ChatBox
+                    key={targetChat?.messages.length}
+                    targetChat={targetChat}
+                    fullfield={fullfield}
+               ></ChatBox>
           </div>
      );
 };

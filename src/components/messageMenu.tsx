@@ -23,14 +23,16 @@ const MessageMenu = ({
                     {mess.map((item: Chats, index: number) => {
                          return (
                               <MessageItem
+                                   messageImage={item?.info.messageImage}
+                                   chatImage={item?.imagesChat}
                                    key={index}
-                                   lastMessageDate={item.info.lastMessageDate}
-                                   lastSendImg={item.info.lastSendImg}
-                                   lastUserName={item.info.lastUserName}
-                                   title={item.info.title}
-                                   flagCheck={item.info.flagCheck}
-                                   value={item.info.value}
-                                   chatId={item.chatId}
+                                   lastMessageDate={item?.info.lastMessageDate}
+                                   lastSendImg={item?.info.lastSendImg}
+                                   lastUserName={item?.info.lastUserName}
+                                   title={item?.info.title}
+                                   flagCheck={item?.info.flagCheck}
+                                   value={item?.info.value}
+                                   chatId={item?.chatId}
                               ></MessageItem>
                          );
                     })}

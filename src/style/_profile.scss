@@ -1,6 +1,6 @@
 .profile {
      position: absolute;
-     top: 8vh;
+     top: 6.5vh;
      left: 32vw;
      background: linear-gradient(90deg, #1a215f, #202a86, #384194);
      width: 31%;
@@ -71,6 +71,7 @@
      }
 
      &__info {
+          user-select: text;
           border-top: 2px solid rgb(163, 163, 163);
           display: flex;
           flex-direction: column;
@@ -226,6 +227,9 @@
                     }
                }
           }
+     }
+     &__info::selection {
+          background-color: red;
      }
 }
 .i {

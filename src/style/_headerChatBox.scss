@@ -32,6 +32,7 @@
           width: 55px;
           height: 55px;
           border-radius: 30px;
+          border: 2px solid rgb(87, 83, 131);
      }
      &__status {
           position: absolute;
@@ -129,7 +130,7 @@
                }
                &Info {
                     display: flex;
-                    flex-direction: column;
+                    flex-direction: row;
                     margin-right: auto;
                     padding: 5px 5px 5px 5px;
                     margin-left: 10px;
@@ -170,11 +171,12 @@
           border-radius: 5px;
           border-bottom-left-radius: 40px;
           border-top-right-radius: 40px;
-          width: 14%;
+          width: 18%;
           background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
           z-index: 2;
           display: flex;
           flex-direction: column;
+          backdrop-filter: blur(3px);
           justify-content: center;
           color: aliceblue;
           align-items: start;
@@ -221,17 +223,74 @@
                }
           }
           &Profile:hover {
-               background-color: #334a52;
+               background-color: #334a5283;
                border-radius: 20px;
           }
           &Clear:hover {
-               background-color: #334a52;
+               background-color: #334a5277;
                border-radius: 20px;
           }
           &Delete:hover {
-               background-color: #334a52;
+               background-color: #334a5265;
                border-radius: 20px;
           }
+     }
+     &__pinnedMessages {
+          position: absolute;
+          top: 73px;
+          background-color: #0f2027ce;
+          width: 79.3vw;
+          z-index: 1;
+          overflow: hidden;
+
+          &Inner {
+               display: flex;
+               flex-direction: row;
+               justify-content: flex-start;
+               align-items: center;
+               margin-left: 2px;
+               gap: 25px;
+
+               &Icon {
+                    position: fixed;
+                    z-index: 10;
+                    border-radius: 15px;
+                    background-color: transparent;
+                    transition: background 1s ease normal;
+               }
+               &Icon:hover {
+                    background: rgba(235, 0, 0, 0.747);
+                    border-radius: 15px;
+               }
+          }
+          &Item {
+               display: flex;
+               flex-direction: row;
+               width: 100%;
+               height: 50px;
+               align-items: center;
+               justify-content: flex-start;
+               margin-left: 35px;
+               color: #ffffff;
+               animation: karusel 30s linear infinite;
+               gap: 20px;
+               border-radius: 10px;
+
+               &Value {
+               }
+          }
+     }
+     &__pinnedMessages::-webkit-scrollbar {
+          width: 3px;
+          height: 8px;
+     }
+     &__pinnedMessages::-webkit-scrollbar-thumb {
+          background-color: #8c00ff;
+          width: 6px;
+     }
+     &__pinnedMessages::-webkit-scrollbar-track {
+          width: 6px;
+          background-color: #212022b9;
      }
 }
 @keyframes openMenu {
@@ -287,5 +346,14 @@
      }
      100% {
           opacity: 0.8;
+     }
+}
+@keyframes karusel {
+     0% {
+          transform: translateX(-600px);
+     }
+
+     100% {
+          transform: translateX(1250px);
      }
 }

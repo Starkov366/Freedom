@@ -13,10 +13,14 @@ import { typeBoxMessageItem } from "./chatBoxMessageItem";
 const HeaderMessageMenu = ({
      targetChat,
      setProfileOpen,
+     userIsDarkTheme,
+     userThemeColorScheme,
      id
 }: {
      setProfileOpen: React.Dispatch<React.SetStateAction<boolean>>;
      id: string;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
      targetChat: Chats;
 }) => {
      const handleOpen = () => {
@@ -27,7 +31,7 @@ const HeaderMessageMenu = ({
           });
      };
      const handlePushAndSortImages = (chat: Chats): Map<string, string[]> => {
-          const images = chat.messages
+          const images = chat?.messages
                .filter((message: typeBoxMessageItem) => {
                     return message.date;
                })
@@ -36,7 +40,7 @@ const HeaderMessageMenu = ({
                });
 
           const monthsImage: Map<string, string[]> = new Map();
-          images.forEach((item) => {
+          images?.forEach((item) => {
                const month: string = item?.date.slice(4, 7)!;
                const Src = item.src;
                if (!Array.isArray(Src)) {
@@ -51,9 +55,7 @@ const HeaderMessageMenu = ({
                          monthsImage.set(month, []);
                     }
                     Src.forEach((item: string) => {
-                         Src?.length! > 1 || typeof Src === undefined
-                              ? monthsImage.get(month)!.push(item)
-                              : null;
+                         typeof Src !== undefined ? monthsImage.get(month)!.push(item) : null;
                     });
                }
           });
@@ -64,11 +66,21 @@ const HeaderMessageMenu = ({
      const dispatch: RootDispatch = useDispatch();
      const images: Map<string, string[]> = handlePushAndSortImages(targetChat);
      return (
-          <div data-id={"1"} className="headerChatBox__toolbarMenu">
-               <div onClick={handleOpen} className="headerChatBox__toolbarMenuProfile">
-                    <FaRegUserCircle size="30" color="grey"></FaRegUserCircle>
-                    <p className="headerChatBox__toolbarMenuClearText">View profile</p>
-               </div>
+          <div
+               style={{
+                    background: userIsDarkTheme
+                         ? userThemeColorScheme.dark[10]
+                         : userThemeColorScheme.light[10]
+               }}
+               data-id={"1"}
+               className="headerChatBox__toolbarMenu"
+          >
+               {targetChat.type === "CHANNEL" || targetChat.type === "GROUP" ? null : (
+                    <div onClick={handleOpen} className="headerChatBox__toolbarMenuProfile">
+                         <FaRegUserCircle size="30" color="grey"></FaRegUserCircle>
+                         <p className="headerChatBox__toolbarMenuClearText">View profile</p>
+                    </div>
+               )}
                <div
                     onClick={() => dispatch(setClearChatHistory({ ID: id }))}
                     className="headerChatBox__toolbarMenuClear"
@@ -98,7 +110,12 @@ const HeaderMessageMenu = ({
                     </p>
                </div>
                {galleryIsOpen ? (
-                    <ChatGallery setGalleryIsOpen={setGalleryIsOpen} images={images}></ChatGallery>
+                    <ChatGallery
+                         userIsDarkTheme={userIsDarkTheme}
+                         userThemeColorScheme={userThemeColorScheme}
+                         setGalleryIsOpen={setGalleryIsOpen}
+                         images={images}
+                    ></ChatGallery>
                ) : null}
           </div>
      );

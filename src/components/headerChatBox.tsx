@@ -7,18 +7,22 @@ import back from "../../public/icons/background.png";
 import HeaderMessageMenu from "./messageHeaderMenu";
 import SearchInput from "./searchInput";
 import { Chats, UserInterface } from "@/StateManagment/appSlice";
-
+import PinnedMessages from "./pinnedMessages";
 type typeHeaderChatBox = {
      fullfield: boolean;
      targetChat: Chats;
      targetNumberOutUser: number;
      ownUser: UserInterface;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
 };
 const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
      fullfield,
      targetChat,
      targetNumberOutUser,
-     ownUser
+     ownUser,
+     userIsDarkTheme,
+     userThemeColorScheme
 }) => {
      const [isOpenMenu, setIsOpenMenu] = React.useState<boolean>(false);
      const [isSearch, setIsSearch] = React.useState<boolean>(false);
@@ -51,17 +55,23 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
      return (
           <header
                style={{
-                    visibility: fullfield ? "visible" : "hidden"
+                    visibility: fullfield ? "visible" : "hidden",
+
+                    background: userIsDarkTheme
+                         ? userThemeColorScheme.dark[1]
+                         : userThemeColorScheme.light[1]
                }}
                className="headerChatBox"
           >
                <Profile
                     setProfileOpen={setProfileOpen}
                     profileOpen={profileOpen}
-                    img={ownUser?.userImage ?? ""}
+                    img={ownUser?.userImage ?? targetChat?.imagesChat}
                     name={ownUser?.userName ?? ""}
                     statusInfo={true}
                     lastStatus={new Date()}
+                    targetChat={targetChat}
+                    type={targetChat?.type}
                ></Profile>
 
                <div className="headerChatBox__toolbar">
@@ -78,6 +88,8 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                </div>
                {isOpenMenu ? (
                     <HeaderMessageMenu
+                         userIsDarkTheme={userIsDarkTheme}
+                         userThemeColorScheme={userThemeColorScheme}
                          targetChat={targetChat}
                          id={targetChat?.chatId}
                          setProfileOpen={setProfileOpen}
@@ -85,6 +97,8 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                ) : null}
                {profileOpen ? (
                     <NewProfile
+                         userIsDarkTheme={userIsDarkTheme}
+                         userThemeColorScheme={userThemeColorScheme}
                          email={ownUser?.userEmail ?? ""}
                          name={ownUser?.userName ?? ""}
                          countFriends={ownUser?.userFriends.length ?? 2}
@@ -97,6 +111,13 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                          setProfileOpen={setProfileOpen}
                          as={"p"}
                     ></NewProfile>
+               ) : null}
+
+               {targetChat?.pinnedMessage.length >= 1 ? (
+                    <PinnedMessages
+                         targetChatId={targetChat.chatId}
+                         pinnedMessages={targetChat.pinnedMessage}
+                    ></PinnedMessages>
                ) : null}
           </header>
      );

@@ -6,8 +6,15 @@ import { JSX } from "react";
 interface typeGallery {
      images: Map<string, string[]>;
      setGalleryIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
 }
-const ChatGallery: React.FC<typeGallery> = ({ images, setGalleryIsOpen }) => {
+const ChatGallery: React.FC<typeGallery> = ({
+     images,
+     setGalleryIsOpen,
+     userIsDarkTheme,
+     userThemeColorScheme
+}) => {
      const handleCreateGallery = (images: Map<string, string[]>): JSX.Element[] => {
           const list: JSX.Element[] = [];
           images.forEach((item: string[], key: string) => {
@@ -32,7 +39,14 @@ const ChatGallery: React.FC<typeGallery> = ({ images, setGalleryIsOpen }) => {
           return list;
      };
      return (
-          <div className="chatBox__gallery">
+          <div
+               style={{
+                    background: userIsDarkTheme
+                         ? userThemeColorScheme.dark[10]
+                         : userThemeColorScheme.light[10]
+               }}
+               className="chatBox__gallery"
+          >
                <header className="chatBox__galleryHeader">
                     <FaArrowLeftLong
                          onClick={() =>
@@ -42,7 +56,7 @@ const ChatGallery: React.FC<typeGallery> = ({ images, setGalleryIsOpen }) => {
                               })
                          }
                          size="35"
-                         color="gray"
+                         color="white"
                          className="chatBox__galleryBack"
                     ></FaArrowLeftLong>
                     <span className="chatBox__galleryTitle">Gallery</span>
@@ -54,7 +68,7 @@ const ChatGallery: React.FC<typeGallery> = ({ images, setGalleryIsOpen }) => {
                               })
                          }
                          size="40"
-                         color="grey"
+                         color="white"
                          className="chatBox__galleryClose"
                     ></IoMdClose>
                </header>

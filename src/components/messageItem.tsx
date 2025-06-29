@@ -1,5 +1,7 @@
+"use client";
 import React from "react";
 import Link from "next/link";
+import undefinedIcon from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
 export type typeMessage = {
      lastSendImg: string;
      title: string;
@@ -9,6 +11,8 @@ export type typeMessage = {
      flagCheck: boolean;
      chatId: string;
      chatImage: string;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
      messageImage: string;
 };
 const MessageItem: React.FC<typeMessage> = ({
@@ -20,21 +24,51 @@ const MessageItem: React.FC<typeMessage> = ({
      flagCheck,
      chatId,
      chatImage,
+     userIsDarkTheme,
+     userThemeColorScheme,
      messageImage
 }) => {
      return (
           <Link style={{ textDecoration: "none", color: "black" }} href={chatId}>
-               <div className="messageMenu__item">
-                    <img className="messageMenu__itemImg" src={lastSendImg}></img>
-                    <div className="messageMenu__itemInfo">
-                         <span className="messageMenu__itemInfoTitle">{title}</span>
-                         <span className="messageMenu__itemInfoUserName">
-                              {lastUserName + ":  "}
+               <div
+                    style={{
+                         color: userIsDarkTheme ? "white" : "black"
+                    }}
+                    className="messageMenu__item"
+               >
+                    <img
+                         className="messageMenu__itemImg"
+                         src={lastSendImg ?? undefinedIcon.src}
+                    ></img>
+                    <div
+                         style={{
+                              background: userIsDarkTheme
+                                   ? "rgb(255,255,255,0.4)"
+                                   : "rgb(255,255,255)"
+                         }}
+                         className="messageMenu__itemInfo"
+                    >
+                         <span
+                              style={{ color: userIsDarkTheme ? "#ebebeb" : "grey" }}
+                              className="messageMenu__itemInfoTitle"
+                         >
+                              {title}
                          </span>
-                         <span className="messageMenu__itemInfoValue">
-                              {value?.length > 18
-                                   ? value.slice(0, 17) + "..."
-                                   : " " + value + messageImage}
+                         <span
+                              style={{ color: userIsDarkTheme ? "#ebebeb" : "grey" }}
+                              className="messageMenu__itemInfoUserName"
+                         >
+                              {lastUserName ? lastUserName + ":  " : ""}
+                         </span>
+                         <span
+                              style={{ color: userIsDarkTheme ? "#ebebeb" : "grey" }}
+                              className="messageMenu__itemInfoValue"
+                         >
+                              {value.length != 0
+                                   ? value?.length > 18
+                                        ? value.slice(0, 17) + "..."
+                                        : " " + value + messageImage
+                                   : "Сообщений нету.."}
                          </span>
                          <span className="messageMenu__itemInfoDate">
                               {lastMessageDate?.slice(16, 21)}

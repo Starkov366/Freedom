@@ -1,7 +1,7 @@
 .headerMessageMenu {
      min-height: 75px;
      max-height: 75px;
-     background-color: #7a85c4;
+     background-color: #b0afb9;
      color: #ffffff;
      border: none;
      border-radius: 8px;
@@ -12,8 +12,8 @@
      justify-content: space-around;
 
      &__burgerMenu {
-          width: 35px;
-          height: 30px;
+          width: 30px;
+          height: 25px;
           padding: 5px 5px 5px 5px;
           background: url("../../public/icons/burgerMenu.png") no-repeat center / cover;
           border: none;
@@ -47,10 +47,16 @@
           height: 30px;
           top: 35%;
           left: 85%;
+          border-radius: 10px;
+          transition: background-color 1s ease;
+     }
+     &__inputSearchDelete:hover {
+          border-radius: 10px;
+          background-color: #8a8a8b77;
      }
      &__profile {
-          width: 40px;
-          height: 40px;
+          width: 35px;
+          height: 35px;
           background: url("../../public/icons/user.png") no-repeat center / cover;
           border: none;
           align-self: flex-end;

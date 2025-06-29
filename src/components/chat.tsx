@@ -21,7 +21,8 @@ const Chat: React.FC<typeChatBox> = ({ fullfield }) => {
                console.log(element);
                if (
                     !element.closest(".settings") &&
-                    !element.closest(".headerMessageMenu__burgerMenu")
+                    !element.closest(".headerMessageMenu__burgerMenu") &&
+                    !element.closest(".profile")
                ) {
                     setIsOpen(false);
                }
@@ -30,17 +31,34 @@ const Chat: React.FC<typeChatBox> = ({ fullfield }) => {
           return () => document.removeEventListener("click", handleClose);
      }, []);
      return (
-          <div className="chatMain">
+          <div
+               style={{
+                    color: user.userIsDarkTheme
+                         ? user.userThemeColorShceme.dark[2]
+                         : user.userThemeColorShceme.light[2]
+               }}
+               className="chatMain"
+          >
                <ChatWindow
+                    userIsDarkTheme={user.userIsDarkTheme}
+                    userThemeColorScheme={user.userThemeColorShceme}
                     key={user?.userChats.length}
                     fullfield={fullfield}
                     user={user}
                ></ChatWindow>
 
                {!isOpen ? (
-                    <MessageMenu isOpen={isOpen} setIsOpen={setIsOpen}></MessageMenu>
+                    <MessageMenu
+                         userIsDarkTheme={user.userIsDarkTheme}
+                         userThemeColorScheme={user.userThemeColorShceme}
+                         isOpen={isOpen}
+                         setIsOpen={setIsOpen}
+                    ></MessageMenu>
                ) : (
-                    <Settings></Settings>
+                    <Settings
+                         userIsDarkTheme={user.userIsDarkTheme}
+                         userThemeColorScheme={user.userThemeColorShceme}
+                    ></Settings>
                )}
           </div>
      );

@@ -8,6 +8,7 @@ import "../style/_messageMenu.scss";
 import "../style/_settings.scss";
 import "../style/_profile.scss";
 import "../style/_createNewWindow.scss";
+import "../style/_bigChat.scss";
 import ChatBox from "@/components/chat";
 import { Provider } from "react-redux";
 import store from "../StateManagment/store";

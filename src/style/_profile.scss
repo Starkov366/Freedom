@@ -1,11 +1,12 @@
 .profile {
      position: absolute;
-     top: 6.5vh;
+     top: 8.5vh;
      left: 32vw;
-     background: linear-gradient(90deg, #1a215f, #202a86, #384194);
+     background: linear-gradient(90deg, #1a215fb6, #202a86b4, #384194b2);
      width: 31%;
-     height: 91.5vh;
+     height: 85.5vh;
      display: flex;
+     backdrop-filter: blur(5px);
      flex-direction: column;
      align-items: center;
      border-radius: 10px;
@@ -14,6 +15,7 @@
      z-index: 20;
      justify-content: center;
      animation: GOD 3.5s linear infinite;
+
      &__topInfo {
           border-bottom-right-radius: 30px;
           border-bottom-left-radius: 30px;
@@ -22,7 +24,7 @@
           display: flex;
           flex-direction: column;
           align-items: center;
-          background-color: rgba(13, 53, 184, 0.73);
+          background: linear-gradient(200deg, #8f92afb6, #6b73a3b4, #cacaceb2);
           width: 100%;
           font-weight: 600;
           padding-bottom: 10px;
@@ -66,13 +68,12 @@
                }
                &Groups {
                }
-               border-bottom: 1px solid black;
           }
      }
 
      &__info {
           user-select: text;
-          border-top: 2px solid rgb(163, 163, 163);
+          overflow: hidden;
           display: flex;
           flex-direction: column;
           margin-top: 10px;
@@ -115,7 +116,8 @@
                align-items: end;
                justify-content: center;
                margin-left: 10px;
-               gap: 40px;
+               max-height: 80px;
+               gap: 30px;
                &Inner {
                     display: flex;
                     flex-direction: column;
@@ -132,7 +134,7 @@
                          outline: none;
                          width: 170%;
                          height: 30px;
-                         margin-top: 10px;
+                         margin-top: 5px;
                          background-color: rgba(81, 88, 131, 0);
                          font-size: 15px;
                          border-bottom: 2px solid grey;
@@ -141,11 +143,12 @@
           }
           &Email {
                display: flex;
+               max-height: 80px;
                flex-direction: row;
                align-items: end;
                justify-content: center;
                margin-left: 10px;
-               gap: 40px;
+               gap: 30px;
                &Inner {
                     display: flex;
                     flex-direction: column;
@@ -164,7 +167,7 @@
                          background-color: rgba(81, 88, 131, 0);
                          font-size: 15px;
                          border-bottom: 2px solid grey;
-                         margin-top: 10px;
+                         margin-top: 5px;
                     }
                }
           }
@@ -173,8 +176,9 @@
                flex-direction: row;
                align-items: end;
                justify-content: center;
+               max-height: 80px;
                margin-left: 10px;
-               gap: 40px;
+               gap: 30px;
                &Inner {
                     display: flex;
                     flex-direction: column;
@@ -190,7 +194,7 @@
                          outline: none;
                          width: 170%;
                          height: 30px;
-                         margin-top: 10px;
+                         margin-bottom: 10px;
                          background-color: rgba(81, 88, 131, 0);
                          font-size: 15px;
                          border-bottom: 2px solid grey;
@@ -202,25 +206,27 @@
                flex-direction: row;
                align-items: end;
                justify-content: center;
+               max-height: 80px;
                margin-left: 10px;
-               gap: 40px;
+               gap: 30px;
                &Inner {
                     display: flex;
                     flex-direction: column;
                     align-items: start;
-                    padding-bottom: 10px;
+                    padding-bottom: 35px;
                     justify-content: center;
                     &Label {
                          max-height: 10px;
+                         margin-top: 20px;
                          font-size: large;
-                         font-weight: 650;
+                         font-weight: 950;
                     }
                     &Input {
                          border: none;
                          outline: none;
                          width: 170%;
                          height: 30px;
-                         margin-top: 10px;
+                         margin-top: 5px;
                          background-color: rgba(81, 88, 131, 0);
                          font-size: 15px;
                          border-bottom: 2px solid grey;

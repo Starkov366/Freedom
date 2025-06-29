@@ -4,9 +4,21 @@ import ChatBox from "./chatBox";
 import { UserInterface } from "@/StateManagment/appSlice";
 import { useParams } from "next/navigation";
 import { DuoChat } from "@/StateManagment/appSlice";
+import BigChatInfo from "./bigChatInfo";
 import type { Chats } from "@/StateManagment/appSlice";
-type typeChatBox = { user: UserInterface; fullfield: boolean; key: number };
-const ChatWindow: React.FC<typeChatBox> = ({ user, fullfield }) => {
+type typeChatBox = {
+     user: UserInterface;
+     fullfield: boolean;
+     key: number;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
+};
+const ChatWindow: React.FC<typeChatBox> = ({
+     user,
+     fullfield,
+     userIsDarkTheme,
+     userThemeColorScheme
+}) => {
      const id = useParams();
      console.log(id);
      function returnFriendName(user: UserInterface): {
@@ -38,23 +50,43 @@ const ChatWindow: React.FC<typeChatBox> = ({ user, fullfield }) => {
      const targetChat = returnFriendName(user!).targetChat?.[0];
      const ownUser = returnFriendName(user!).ownUser;
      return (
-          <div className="chat">
+          <div
+               style={{
+                    color: user.userIsDarkTheme
+                         ? user.userThemeColorShceme.dark[4]
+                         : user.userThemeColorShceme.light[4]
+               }}
+               className="chat"
+          >
                <HeaderChatBox
+                    userIsDarkTheme={user.userIsDarkTheme}
+                    userThemeColorScheme={user.userThemeColorShceme}
                     targetChat={targetChat}
                     targetNumberOutUser={outName}
                     ownUser={ownUser}
                     fullfield={fullfield}
                ></HeaderChatBox>
                {!fullfield ? (
-                    <div className="chat__info">
-                         <p>Select chat to start messaging</p>
+                    <div
+                         style={{ background: userIsDarkTheme ? "gray" : "white" }}
+                         className="chat__info"
+                    >
+                         <p style={{ color: userIsDarkTheme ? "white" : "black" }}>
+                              Select chat to start messaging
+                         </p>
                     </div>
                ) : null}
                <ChatBox
+                    userIsDarkTheme={user.userIsDarkTheme}
+                    userThemeColorScheme={user.userThemeColorShceme}
                     key={targetChat?.messages.length}
                     targetChat={targetChat}
                     fullfield={fullfield}
                ></ChatBox>
+               <BigChatInfo
+                    userIsDarkTheme={userIsDarkTheme}
+                    userThemeColorScheme={userThemeColorScheme}
+               ></BigChatInfo>
           </div>
      );
 };

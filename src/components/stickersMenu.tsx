@@ -1,8 +1,12 @@
 import React from "react";
 const StickerMenu = ({
-     setInputValue
+     setInputValue,
+     userIsDarkTheme,
+     userThemeColorScheme
 }: {
      setInputValue: React.Dispatch<React.SetStateAction<string>>;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
 }) => {
      const stickers: string[] = [
           "😀",
@@ -341,7 +345,15 @@ const StickerMenu = ({
           }
      };
      return (
-          <div onClick={(event) => handleAddSticker(event)} className="chatBox__stickerMenu">
+          <div
+               style={{
+                    background: userIsDarkTheme
+                         ? userThemeColorScheme.dark[10]
+                         : userThemeColorScheme.light[10]
+               }}
+               onClick={(event) => handleAddSticker(event)}
+               className="chatBox__stickerMenu"
+          >
                {stickers.map((item: string, index: number) => {
                     return (
                          <span className="chatBox__stickerMenuItem" key={index}>

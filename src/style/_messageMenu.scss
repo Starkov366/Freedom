@@ -1,6 +1,6 @@
 .messageMenu {
      width: 20.9%;
-     background-color: #565677;
+     background-color: #e0e0e0;
      margin: -10px -7vh -5px 0px;
 
      &__inner {
@@ -27,15 +27,14 @@
           justify-content: space-around;
           width: 100%;
           justify-self: center;
+          background: none;
           padding-left: 10px;
           margin-right: 5px;
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
           height: 8.5vh;
+          transition: background 0.5s ease;
      }
-     &__itemInfo:hover {
-          background-color: rgb(216, 211, 211);
-          user-select: none;
-     }
+
      &__itemImg {
           width: 2.5vw;
           height: 2.5vw;
@@ -43,6 +42,8 @@
           padding: 4px 4px 4px 4px;
           margin-right: 5px;
           border: 1px solid white;
+          object-fit: cover;
+          object-position: center;
      }
      &__itemInfo {
           display: grid;
@@ -55,6 +56,10 @@
           position: relative;
           border-radius: 5px;
           margin-right: 10px;
+     }
+     &__item:hover {
+          background: rgba(0, 0, 0, 0.3);
+          user-select: none;
      }
      &__itemInfoTitle {
           grid-row: 1 / 3;

@@ -21,7 +21,7 @@ const SearchInput: React.FC<typeInput> = ({ targetChat }) => {
           setSearchInput(iValue);
           const newMessagesArray: typeBoxMessageItem[] = targetChat.messages.filter(
                (mess: typeBoxMessageItem) => {
-                    return mess.value.includes(iValue);
+                    return mess.value.toUpperCase().includes(iValue.toUpperCase());
                }
           );
           const result = newMessagesArray.map((mess: typeBoxMessageItem) => {
@@ -59,6 +59,7 @@ const SearchInput: React.FC<typeInput> = ({ targetChat }) => {
                               searchValue.map((item: searchValue, index: number) => {
                                    return (
                                         <SearchPanelItem
+                                             searchInput={searchInput}
                                              name={item.name}
                                              value={item.value}
                                              img={item.img}

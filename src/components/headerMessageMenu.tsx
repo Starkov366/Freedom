@@ -4,27 +4,55 @@ import ProfileHOC from "./profileHOC";
 import Profile from "./profile";
 import { useSelector } from "react-redux";
 import { RootState } from "../StateManagment/store";
+import { Chats } from "../StateManagment/appSlice";
 const HeaderMessageMenu = ({
      isOpen,
-     setIsOpen
+     setIsOpen,
+     setChats,
+     value,
+     setValue,
+     userIsDarkTheme,
+     userThemeColorScheme
 }: {
      isOpen: boolean;
      setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+     setChats: React.Dispatch<React.SetStateAction<Chats[]>>;
+     value: string;
+     setValue: React.Dispatch<React.SetStateAction<string>>;
+     userIsDarkTheme?: boolean;
+     userThemeColorScheme?: { dark: string[]; light: string[] };
 }) => {
      const user = useSelector((store: RootState) => store.User);
-     const [value, setValue] = React.useState<string>("");
+
      const [profileOpen, setProfileOpen] = React.useState<boolean>(false);
      const [edit, setEdit] = React.useState<boolean>(false);
      const handleSetValue = (event: React.ChangeEvent<HTMLInputElement>) => {
           setValue(event.currentTarget.value);
+          setChats((prevState: Chats[]) => {
+               const newChats = prevState.filter((chat: Chats) => {
+                    return chat.info.title.includes(event.target.value);
+               });
+
+               return newChats;
+          });
      };
      const NewProfile = ProfileHOC({
           WrappedComponent: Profile,
           edit: edit
      });
+     React.useEffect(() => {
+          value.length === 0 ? setChats(user.userChats) : null;
+     }, [value]);
 
      return (
-          <div className="headerMessageMenu">
+          <div
+               style={{
+                    background: userIsDarkTheme
+                         ? userThemeColorScheme?.dark[5]
+                         : userThemeColorScheme?.light[5]
+               }}
+               className="headerMessageMenu"
+          >
                <button
                     onClick={() => setIsOpen(!isOpen)}
                     className="headerMessageMenu__burgerMenu"
@@ -50,6 +78,8 @@ const HeaderMessageMenu = ({
                ></button>
                {profileOpen ? (
                     <NewProfile
+                         userIsDarkTheme={userIsDarkTheme!}
+                         userThemeColorScheme={userThemeColorScheme!}
                          key={Math.random()}
                          email={user.userEmail}
                          name={user.userName}

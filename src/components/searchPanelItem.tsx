@@ -6,8 +6,16 @@ type typeSearchItem = {
      value: string;
      date: string;
      img: string;
+     searchInput: string;
 };
-const SearchPanelItem: React.FC<typeSearchItem> = ({ img, name, value, date, index }) => {
+const SearchPanelItem: React.FC<typeSearchItem> = ({
+     img,
+     name,
+     value,
+     date,
+     index,
+     searchInput
+}) => {
      return (
           <div key={index} className="headerChatBox__searchPanelItem">
                <img
@@ -17,8 +25,14 @@ const SearchPanelItem: React.FC<typeSearchItem> = ({ img, name, value, date, ind
                     className="headerChatBox__searchPanelImg"
                ></img>
                <div className="headerChatBox__searchPanelInfo">
-                    <span className="headerChatBox__searchPanelInfoName">{name}</span>
-                    <span className="headerChatBox__searchPanelInfoValue">{value}</span>
+                    <span className="headerChatBox__searchPanelInfoName">{name}: </span>
+                    {value.split(" ").map((letter: string) => {
+                         return letter.toUpperCase().includes(searchInput.toUpperCase()) ? (
+                              <mark className="headerChatBox__searchPanelInfoValue">{letter}</mark>
+                         ) : (
+                              <span className="headerChatBox__searchPanelInfoValue">{letter}</span>
+                         );
+                    })}
                </div>
                <span className="headerChatBox__searchPanelDate">{date.slice(8, 21)}</span>
           </div>

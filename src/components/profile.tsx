@@ -25,9 +25,11 @@ type ProfileProps = {
      telegram: string;
      instagram: string;
      edit?: boolean;
-
      as: ElementType;
      owner?: boolean;
+     userIsDarkTheme: boolean;
+     userThemeColorScheme: { dark: string[]; light: string[] };
+     type?: string;
 };
 enum TYPES {
      "description" = "description",
@@ -46,12 +48,13 @@ const Profile = ({
      email,
      telegram,
      instagram,
-
      edit,
      as,
      owner,
      setEdit,
-     img
+     img,
+     userIsDarkTheme,
+     userThemeColorScheme
 }: ProfileProps) => {
      const [values, setValue] = React.useState({
           description: description,
@@ -85,7 +88,14 @@ const Profile = ({
      };
 
      return (
-          <div className="profile">
+          <div
+               className="profile"
+               style={{
+                    background: userIsDarkTheme
+                         ? userThemeColorScheme.dark[10]
+                         : userThemeColorScheme.light[10]
+               }}
+          >
                <div className="profile__topInfo">
                     <div className="profile__topInfoHeader">
                          <FaArrowLeftLong
@@ -138,7 +148,7 @@ const Profile = ({
                          </div>
                     </div>
                     <div className="profile__infoUserId">
-                         <GrStatusInfo className="i" size="32" color="grey"></GrStatusInfo>
+                         <GrStatusInfo className="i" size="32" color="white"></GrStatusInfo>
                          <div className="profile__infoUserIdInner">
                               <p className="profile__infoUserIdInnerLabel">Looser ID</p>
                               <PolyComponent
@@ -157,7 +167,7 @@ const Profile = ({
                          <MdOutlineMailOutline
                               className="i"
                               size="32"
-                              color="grey"
+                              color="white"
                          ></MdOutlineMailOutline>
                          <div className="profile__infoEmailInner">
                               <p className="profile__infoEmailInnerLabel">Email</p>
@@ -174,7 +184,7 @@ const Profile = ({
                          </div>
                     </div>
                     <div className="profile__infoTelegram">
-                         <BsTelegram className="i" size="32" color="grey"></BsTelegram>
+                         <BsTelegram className="i" size="32" color="white"></BsTelegram>
                          <div className="profile__infoTelegramInner">
                               <p className="profile__infoTelegramInnerLabel">Telegram</p>
                               <PolyComponent
@@ -190,9 +200,9 @@ const Profile = ({
                          </div>
                     </div>
                     <div className="profile__infoInstagram">
-                         <FaInstagram className="i" size="32" color="grey"></FaInstagram>
+                         <FaInstagram className="i" size="32" color="white"></FaInstagram>
                          <div className="profile__infoInstagramInner">
-                              <p className="profile__infoInstagramInnerLabel">Instagram</p>
+                              <span className="profile__infoInstagramInnerLabel">Instagram</span>
                               <PolyComponent
                                    onChange={(event: any) => handleChangeData(event)}
                                    onBlur={(event: any) => handleBlur(event)}

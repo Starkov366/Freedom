@@ -6,9 +6,16 @@ import { MdContentCopy } from "react-icons/md";
 import { RootDispatch } from "@/StateManagment/store";
 import { useDispatch } from "react-redux";
 import { MdOutlineModeEdit } from "react-icons/md";
-import { setDeleteMessageById, setPinnedMessages } from "@/StateManagment/appSlice";
+import { IoIosSave } from "react-icons/io";
+import { RiReplyFill } from "react-icons/ri";
+import {
+     setDeleteMessageById,
+     setPinnedMessages,
+     setAddSavedMessage
+} from "@/StateManagment/appSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/StateManagment/store";
+import { typeBoxMessageItem } from "./chatBoxMessageItem";
 type typeContext = {
      inputValue?: string;
      top: number;
@@ -21,6 +28,13 @@ type typeContext = {
      targetChatId: string;
      author: string;
      handleAddMessage?: (typeEvent?: string, idMessage?: number) => void;
+     language: string;
+     message: typeBoxMessageItem;
+     setReplyMessage?: React.Dispatch<
+          React.SetStateAction<{ name: string; value: string; y: number } | undefined>
+     >;
+     type: string;
+     positionY: number;
 };
 const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
      (
@@ -34,7 +48,12 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                handleAddMessage,
                inputValue,
                userIsDarkTheme,
-               userThemeColorScheme
+               userThemeColorScheme,
+               message,
+               language,
+               setReplyMessage,
+               type,
+               positionY
           },
           ref
      ) => {
@@ -56,6 +75,16 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
           const handlePinnedMessage = (idChat: string, value: string) => {
                dispatch(setPinnedMessages({ idChat: idChat, value: value }));
           };
+          const handleAddSaveMessage = (
+               event: React.MouseEvent<HTMLDivElement>,
+               message: typeBoxMessageItem
+          ) => {
+               dispatch(setAddSavedMessage({ message: message }));
+               event.currentTarget.style.background = "#39e3d8";
+          };
+          const handleCreateReplyToMessage = (name: string, value: string, y: number) => {
+               setReplyMessage ? setReplyMessage({ name: name, value: value, y: y }) : null;
+          };
           const userName = useSelector((store: RootState) => store.User.userName);
           const tt = "edit";
           return (
@@ -66,7 +95,7 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                          left: `${left}px`,
                          background: userIsDarkTheme
                               ? "linear-gradient(135deg, #3d476da1, #28314e9d, #502581a2)"
-                              : userThemeColorScheme?.light[1]
+                              : userThemeColorScheme?.light[10]
                     }}
                     className="chatBox__contextMenu"
                >
@@ -77,14 +106,29 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                          className="chatBox__contextMenuPin"
                     >
                          <TiPin size={30} color="gray"></TiPin>
-                         <span className="chatBox__contextMenuPinLabel">Pin message</span>
+                         <span className="chatBox__contextMenuPinLabel">
+                              {language === "RUSSIAN" ? "Закрепить сообщение" : "Pin message"}
+                         </span>
                     </div>
                     <div
                          onClick={(event) => handleCopyValueMeassage(event)}
                          className="chatBox__contextMenuCopy"
                     >
                          <MdContentCopy size={30} color="gray"></MdContentCopy>
-                         <span className="chatBox__contextMenuCopyLabel">Copy message</span>
+                         <span className="chatBox__contextMenuCopyLabel">
+                              {language === "RUSSIAN" ? "Копировать сообщение" : "Copy message"}
+                         </span>
+                    </div>
+                    <div
+                         onClick={(event) => handleAddSaveMessage(event, message)}
+                         className="chatBox__contextMenuSave"
+                    >
+                         <IoIosSave size={30} color="gray"></IoIosSave>
+                         <span className="chatBox__contextMenuSaveLabel">
+                              {language === "RUSSIAN"
+                                   ? "Отправить в 'Сохрененные' сообщения"
+                                   : "Send to saved messages"}
+                         </span>
                     </div>
                     <div
                          onClick={(event) => handleDeleteMessageById(event, targetChatId, id)}
@@ -92,9 +136,24 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                     >
                          <MdDelete size={30} color="gray"></MdDelete>
                          <span className="chatBox__contextMenuDeleteLabel">
-                              Delete for everyone
+                              {language === "RUSSIAN" ? "Удалить для всех" : "Delete for everyone"}
                          </span>
                     </div>
+                    {type !== "CHANNEL" ? (
+                         <div
+                              onClick={(event) =>
+                                   handleCreateReplyToMessage(author, value, positionY)
+                              }
+                              className="chatBox__contextMenuReply"
+                         >
+                              <RiReplyFill size={30} color="gray"></RiReplyFill>
+                              <span className="chatBox__contextMenuReplyLabel">
+                                   {language === "RUSSIAN"
+                                        ? "Ответить на сообщение"
+                                        : "Reply to message"}
+                              </span>
+                         </div>
+                    ) : null}
                     {userName === author && handleAddMessage ? (
                          <div
                               style={{
@@ -109,10 +168,12 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                               }}
                               className="chatBox__contextMenuEdit"
                          >
-                              <MdOutlineModeEdit size={30} color="gray"></MdOutlineModeEdit>
+                              <MdOutlineModeEdit size={30} color="black"></MdOutlineModeEdit>
                               {inputValue?.length! >= 1 ? (
                                    <span className="chatBox__contextMenuEditLabel">
-                                        Edit message
+                                        {language === "RUSSIAN"
+                                             ? "Редактировать сообщения"
+                                             : "Edit message"}
                                    </span>
                               ) : (
                                    <span
@@ -123,7 +184,9 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                                         }}
                                         className="chatBox__contextMenuEditLabel"
                                    >
-                                        Write in textbox value to EDIT
+                                        {language === "RUSSIAN"
+                                             ? "Для редактирования напишите новое сообщение не отправляя"
+                                             : "Write a message in the text field in advance without sending it"}
                                    </span>
                               )}
                          </div>

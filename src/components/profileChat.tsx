@@ -1,9 +1,14 @@
 "use client";
 import { StaticImageData } from "next/image";
 import type { Chats } from "@/StateManagment/appSlice";
+import undefinedImages from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
+import undefinedIconDuo from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
+import undefinedIconGroup from "../../public/icons/group (1).png";
+import undefinedIconChannel from "../../public/icons/tv.png";
+import undefinedIconSaved from "../../public/icons/save.png";
 import React from "react";
 type typeHeaderProfile = {
-     img: string;
+     lastSendImg: string;
      statusInfo: boolean;
      name: string;
      lastStatus: Date;
@@ -11,39 +16,52 @@ type typeHeaderProfile = {
      profileOpen: boolean;
      type: "GROUP" | "CHANNEL" | "DUO" | "SAVED";
      targetChat: Chats;
+     setBigChatIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+     language: string;
 };
 const HeaderProfile: React.FC<typeHeaderProfile> = ({
      name,
-     img = "",
+     lastSendImg,
      statusInfo,
      lastStatus,
+     setBigChatIsOpen,
      profileOpen,
      type,
      targetChat,
-     setProfileOpen
+     setProfileOpen,
+     language
 }) => {
+     console.log(undefinedImages);
      return (
           <div
                onClick={() => {
                     type !== "GROUP" && type !== "CHANNEL"
                          ? setProfileOpen(!profileOpen)
-                         : console.log("это не дуо");
+                         : setBigChatIsOpen((prev) => !prev);
                }}
                className="headerChatBox__profile"
           >
                <div className="headerChatBox__profileCircle">
-                    {img ? (
-                         <img
-                              style={{
-                                   paddingBottom:
-                                        type === "GROUP" || type === "CHANNEL" ? "20px" : ""
-                              }}
-                              className="headerChatBox__profileImage"
-                              src={img}
-                         />
-                    ) : (
-                         <span></span>
-                    )}
+                    <img
+                         style={{
+                              paddingBottom: type === "GROUP" || type === "CHANNEL" ? "20px" : ""
+                         }}
+                         className="headerChatBox__profileImage"
+                         src={
+                              lastSendImg
+                                   ? lastSendImg
+                                   : lastSendImg === "" && type === "DUO"
+                                   ? undefinedIconDuo.src
+                                   : lastSendImg === "" && type === "CHANNEL"
+                                   ? undefinedIconChannel.src
+                                   : lastSendImg === "" && type === "SAVED"
+                                   ? undefinedIconSaved.src
+                                   : lastSendImg === "" && type === "GROUP"
+                                   ? undefinedIconGroup.src
+                                   : undefinedIconDuo.src
+                         }
+                    />
+
                     {type === "GROUP" || type === "CHANNEL" ? null : (
                          <div
                               style={{
@@ -66,7 +84,13 @@ const HeaderProfile: React.FC<typeHeaderProfile> = ({
                          </p>
                     ) : (
                          <p className="headerChatBox__statusInfo">
-                              {statusInfo ? "Online" : `Был в сети : ${lastStatus}`}
+                              {statusInfo
+                                   ? language === "RUSSIAN"
+                                        ? "Онлайн"
+                                        : "Online"
+                                   : language === "RUSSIAN"
+                                   ? `Был в сети: ${lastStatus.toString()}`
+                                   : `Was online: ${lastStatus.toString()}`}
                          </p>
                     )}
                </div>

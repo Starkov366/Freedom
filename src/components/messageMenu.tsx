@@ -11,14 +11,17 @@ const MessageMenu = ({
      isOpen,
      setIsOpen,
      userIsDarkTheme,
-     userThemeColorScheme
+     userThemeColorScheme,
+     language
 }: {
      isOpen: boolean;
      setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
      userIsDarkTheme: boolean;
      userThemeColorScheme: { dark: string[]; light: string[] };
+     language: string;
 }) => {
      const mess = useSelector((store: RootState) => store.User.userChats);
+     const userName = useSelector((store: RootState) => store.User.userName);
      const [chats, setChats] = React.useState<Chats[]>(mess!);
      const [value, setValue] = React.useState<string>("");
      React.useEffect(() => {
@@ -43,14 +46,24 @@ const MessageMenu = ({
                     setIsOpen={setIsOpen}
                     value={value}
                     setValue={setValue}
+                    language={language}
                ></HeaderMessageMenu>
                <div className="messageMenu__inner">
                     {value.length > 0 ? (
                          <span className="messageMenu__innerLabel">Local search:</span>
                     ) : null}
+
                     {chats.map((item: Chats, index: number) => {
+                         const newMessagesCount: number = item?.messages?.reduce((acc, curr) => {
+                              if (curr.checkFlag === false && curr.author !== userName) {
+                                   return acc + 1;
+                              } else {
+                                   return acc;
+                              }
+                         }, 0);
                          return (
                               <MessageItem
+                                   typeChat={item.type}
                                    userThemeColorScheme={userThemeColorScheme}
                                    userIsDarkTheme={userIsDarkTheme}
                                    messageImage={item?.info.messageImage}
@@ -63,6 +76,7 @@ const MessageMenu = ({
                                    flagCheck={item?.info.flagCheck}
                                    value={item?.info.value}
                                    chatId={item?.chatId}
+                                   countMessagesNew={newMessagesCount}
                               ></MessageItem>
                          );
                     })}

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Aldrich&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Beau+Rivage&family=Gravitas+One&family=Pacifico&family=Pixelify+Sans:wght@400..700&family=Russo+One&family=Tektur:wght@400..900&display=swap");
 .chat {
      width: 80%;
 
@@ -8,6 +9,7 @@
      margin: -20px 0px 0px -8px;
      display: flex;
      flex-direction: column;
+
      justify-content: space-between;
      &__info {
           align-self: center;
@@ -28,9 +30,10 @@
      height: 100%;
 }
 html {
-     font-family: "Aldrich", sans-serif;
-     font-weight: 400;
+     font-family: "Tektur", sans-serif;
+     font-optical-sizing: auto;
+     font-weight: 500;
      font-style: normal;
      overflow: hidden;
-     user-select: none;
+     font-variation-settings: "wdth" 100;
 }

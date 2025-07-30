@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import saveImg from "../../public/icons/save.png";
 type typeSearchItem = {
      index: number;
      name: string;
@@ -7,6 +8,9 @@ type typeSearchItem = {
      date: string;
      img: string;
      searchInput: string;
+     authorImage: string;
+     y: number;
+     handleScroll: (value: number) => void;
 };
 const SearchPanelItem: React.FC<typeSearchItem> = ({
      img,
@@ -14,23 +18,34 @@ const SearchPanelItem: React.FC<typeSearchItem> = ({
      value,
      date,
      index,
-     searchInput
+     searchInput,
+     authorImage,
+     y,
+     handleScroll
 }) => {
+     console.log(authorImage, "DFSDDSDDQWEWQEDWDQEQWDWDQDW", y);
+
      return (
-          <div key={index} className="headerChatBox__searchPanelItem">
+          <div
+               onClick={() => handleScroll(y)}
+               key={index}
+               className="headerChatBox__searchPanelItem"
+          >
                <img
-                    src={
-                         "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg"
-                    }
+                    src={authorImage !== "" ? authorImage : saveImg.src}
                     className="headerChatBox__searchPanelImg"
                ></img>
                <div className="headerChatBox__searchPanelInfo">
                     <span className="headerChatBox__searchPanelInfoName">{name}: </span>
-                    {value.split(" ").map((letter: string) => {
+                    {value.split(" ").map((letter: string, index: number) => {
                          return letter.toUpperCase().includes(searchInput.toUpperCase()) ? (
-                              <mark className="headerChatBox__searchPanelInfoValue">{letter}</mark>
+                              <mark key={index} className="headerChatBox__searchPanelInfoValue">
+                                   {letter}
+                              </mark>
                          ) : (
-                              <span className="headerChatBox__searchPanelInfoValue">{letter}</span>
+                              <span key={index} className="headerChatBox__searchPanelInfoValue">
+                                   {letter}
+                              </span>
                          );
                     })}
                </div>

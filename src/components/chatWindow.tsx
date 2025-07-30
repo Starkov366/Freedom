@@ -5,21 +5,28 @@ import { UserInterface } from "@/StateManagment/appSlice";
 import { useParams } from "next/navigation";
 import { DuoChat } from "@/StateManagment/appSlice";
 import BigChatInfo from "./bigChatInfo";
-import type { Chats } from "@/StateManagment/appSlice";
+import type { Chats, UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
 type typeChatBox = {
      user: UserInterface;
      fullfield: boolean;
      key: number;
      userIsDarkTheme: boolean;
      userThemeColorScheme: { dark: string[]; light: string[] };
+     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+     isOpen: boolean;
+     language: string;
 };
 const ChatWindow: React.FC<typeChatBox> = ({
      user,
      fullfield,
      userIsDarkTheme,
-     userThemeColorScheme
+     userThemeColorScheme,
+     setIsOpen,
+     isOpen,
+     language
 }) => {
      const id = useParams();
+     const [bigChatInfoOpen, setBigChatInfoOpen] = React.useState<boolean>(isOpen);
      console.log(id);
      function returnFriendName(user: UserInterface): {
           targetChat: Chats[];
@@ -48,7 +55,24 @@ const ChatWindow: React.FC<typeChatBox> = ({
      }
      const outName = returnFriendName(user!).outName;
      const targetChat = returnFriendName(user!).targetChat?.[0];
+     const container = React.useRef<null | HTMLDivElement>(null);
      const ownUser = returnFriendName(user!).ownUser;
+     React.useEffect(() => {
+          const handleClose = (event: any) => {
+               const element = event.target as HTMLElement;
+               if (
+                    !element.closest(".bigChatInfo") &&
+                    !element.closest(".headerChatBox") &&
+                    !element.closest(".profile") &&
+                    !element.closest(".contactMenu") &&
+                    !element.closest(".createNewWindow")
+               ) {
+                    setBigChatInfoOpen(false);
+               }
+          };
+          document.addEventListener("click", handleClose);
+          return () => document.removeEventListener("click", handleClose);
+     }, []);
      return (
           <div
                style={{
@@ -65,6 +89,9 @@ const ChatWindow: React.FC<typeChatBox> = ({
                     targetNumberOutUser={outName}
                     ownUser={ownUser}
                     fullfield={fullfield}
+                    setBigInfoChatOpen={setBigChatInfoOpen}
+                    language={user.userLanguage}
+                    container={container}
                ></HeaderChatBox>
                {!fullfield ? (
                     <div
@@ -72,21 +99,39 @@ const ChatWindow: React.FC<typeChatBox> = ({
                          className="chat__info"
                     >
                          <p style={{ color: userIsDarkTheme ? "white" : "black" }}>
-                              Select chat to start messaging
+                              {language === "RUSSIAN"
+                                   ? "Выберите чат дабы начать общение"
+                                   : "Select chat to start a messaging"}
                          </p>
                     </div>
                ) : null}
                <ChatBox
                     userIsDarkTheme={user.userIsDarkTheme}
                     userThemeColorScheme={user.userThemeColorShceme}
-                    key={targetChat?.messages.length}
+                    key={targetChat?.messages?.length}
                     targetChat={targetChat}
                     fullfield={fullfield}
+                    container={container}
+                    language={user.userLanguage}
                ></ChatBox>
-               <BigChatInfo
-                    userIsDarkTheme={userIsDarkTheme}
-                    userThemeColorScheme={userThemeColorScheme}
-               ></BigChatInfo>
+               {(bigChatInfoOpen && targetChat?.type === "GROUP") ||
+               (targetChat?.type === "CHANNEL" && bigChatInfoOpen) ? (
+                    <BigChatInfo
+                         language={user.userLanguage}
+                         isOpen={isOpen}
+                         targetChat={targetChat}
+                         setIsOpen={setIsOpen}
+                         setBigChatIsOpen={setBigChatInfoOpen}
+                         userIsDarkTheme={userIsDarkTheme}
+                         userThemeColorScheme={userThemeColorScheme}
+                         members={targetChat?.joinUsers}
+                         groupName={targetChat?.info.chatName}
+                         chatDescription={targetChat?.info.chatDescription}
+                         targetChatID={targetChat?.chatId}
+                         chatImage={targetChat?.imagesChat}
+                         type={targetChat?.type}
+                    ></BigChatInfo>
+               ) : null}
           </div>
      );
 };

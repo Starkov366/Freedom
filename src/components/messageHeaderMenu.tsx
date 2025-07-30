@@ -15,13 +15,15 @@ const HeaderMessageMenu = ({
      setProfileOpen,
      userIsDarkTheme,
      userThemeColorScheme,
-     id
+     id,
+     language
 }: {
      setProfileOpen: React.Dispatch<React.SetStateAction<boolean>>;
      id: string;
      userIsDarkTheme: boolean;
      userThemeColorScheme: { dark: string[]; light: string[] };
      targetChat: Chats;
+     language: string;
 }) => {
      const handleOpen = () => {
           setProfileOpen((flag: boolean) => {
@@ -30,6 +32,7 @@ const HeaderMessageMenu = ({
                return newFlag;
           });
      };
+
      const handlePushAndSortImages = (chat: Chats): Map<string, string[]> => {
           const images = chat?.messages
                .filter((message: typeBoxMessageItem) => {
@@ -75,10 +78,15 @@ const HeaderMessageMenu = ({
                data-id={"1"}
                className="headerChatBox__toolbarMenu"
           >
-               {targetChat.type === "CHANNEL" || targetChat.type === "GROUP" ? null : (
+               {targetChat.type === "CHANNEL" ||
+               targetChat.type === "GROUP" ||
+               targetChat.type === "SAVED" ? null : (
                     <div onClick={handleOpen} className="headerChatBox__toolbarMenuProfile">
                          <FaRegUserCircle size="30" color="grey"></FaRegUserCircle>
-                         <p className="headerChatBox__toolbarMenuClearText">View profile</p>
+                         <p className="headerChatBox__toolbarMenuClearText">
+                              {" "}
+                              {language === "RUSSIAN" ? "Показать профиль" : "View profile"}
+                         </p>
                     </div>
                )}
                <div
@@ -86,7 +94,10 @@ const HeaderMessageMenu = ({
                     className="headerChatBox__toolbarMenuClear"
                >
                     <MdOutlineCleaningServices size="31" color="grey"></MdOutlineCleaningServices>
-                    <p className="headerChatBox__toolbarMenuClearText">Clear chat</p>
+                    <p className="headerChatBox__toolbarMenuClearText">
+                         {" "}
+                         {language === "RUSSIAN" ? "Очистить чат" : "Clear chat"}
+                    </p>
                </div>
 
                <div
@@ -95,7 +106,7 @@ const HeaderMessageMenu = ({
                >
                     <IoImages size="30" color="grey"></IoImages>
                     <p className="headerChatBox__toolbarMenuDeleteText" style={{ color: "white" }}>
-                         Chat images
+                         {language === "RUSSIAN" ? "Изображения чата" : "Chat images"}
                     </p>
                </div>
                <div
@@ -106,7 +117,7 @@ const HeaderMessageMenu = ({
                >
                     <FaRegTrashAlt size="30" color="red"></FaRegTrashAlt>
                     <p className="headerChatBox__toolbarMenuDeleteText" style={{ color: "red" }}>
-                         Delete chat
+                         {language === "RUSSIAN" ? "Удалить чат" : "Delete chat"}
                     </p>
                </div>
                {galleryIsOpen ? (
@@ -115,6 +126,7 @@ const HeaderMessageMenu = ({
                          userThemeColorScheme={userThemeColorScheme}
                          setGalleryIsOpen={setGalleryIsOpen}
                          images={images}
+                         language={language}
                     ></ChatGallery>
                ) : null}
           </div>

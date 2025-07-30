@@ -1,0 +1,181 @@
+.autorizationPage {
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     justify-content: space-between;
+     &__background {
+          margin-top: -20px;
+          margin-right: -20px;
+          margin-bottom: -10px;
+          background: url("../../public/icons/graphic-2d-colorful-wallpaper-with-grainy-gradients.jpg")
+               no-repeat center / cover;
+          height: 101vh;
+          border-top-left-radius: 350px;
+          width: 40vw;
+     }
+     &__form {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-start;
+          height: 100vh;
+          border-radius: 30px;
+          &Title {
+               display: flex;
+               flex-direction: row-reverse;
+               gap: 10px;
+               user-select: none;
+               align-items: center;
+
+               &Name {
+                    text-align: center;
+                    font-weight: 800;
+                    font-size: 30px;
+               }
+               &Logo {
+                    width: 50px;
+                    height: 50px;
+                    -webkit-user-drag: none;
+               }
+          }
+
+          &Inner {
+               display: flex;
+               flex-direction: column;
+               align-items: center;
+               justify-content: center;
+               border-radius: 15px;
+               padding-bottom: 10px;
+               margin-left: 20vw;
+               width: 70%;
+               background-color: rgb(255, 255, 255);
+               &Title {
+                    font-size: 30px;
+                    font-weight: 700;
+
+                    user-select: none;
+               }
+
+               &Inputs {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 0;
+                    flex-shrink: 0;
+                    position: relative;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 30px;
+                    &Login {
+                         width: 30vw;
+                         height: 50px;
+                         border-radius: 5px;
+                         border: 2px solid rgb(187, 187, 187);
+                         background: rgb(255, 255, 255);
+                         font-size: 18px;
+                         font-weight: 600;
+                         color: rgb(59, 55, 55);
+                         outline: none;
+                         transition: all 0.5s ease;
+                         &Label {
+                              align-self: flex-start;
+                         }
+                    }
+                    &Login:focus {
+                         border: 3px solid rgb(37, 153, 219);
+                    }
+                    &Password {
+                         width: 30vw;
+                         height: 50px;
+                         border-radius: 5px;
+                         border: 2px solid rgb(187, 187, 187);
+                         background: rgb(255, 255, 255);
+                         font-size: 18px;
+                         font-weight: 600;
+                         color: rgb(59, 55, 55);
+                         outline: none;
+                         transition: all 0.5s ease;
+                         &Label {
+                              align-self: flex-start;
+                         }
+
+                         &Eye {
+                              position: absolute;
+                              top: 105px;
+                              left: 28vw;
+                         }
+                    }
+                    &Password:focus {
+                         border: 3px solid rgb(37, 153, 219);
+                    }
+                    &Submit {
+                         width: 27vw;
+                         border: none;
+                         height: 45px;
+                         background-color: rgb(0, 140, 255);
+                         color: white;
+                         font-size: 20px;
+                         font-weight: 550;
+                         border-radius: 5px;
+                         transition: all 0.5s ease;
+                    }
+                    &Submit:hover {
+                         background-color: rgb(85, 178, 255);
+                    }
+
+                    &Title {
+                         font-size: 18px;
+                         user-select: none;
+                    }
+
+                    &Services {
+                         display: flex;
+                         flex-direction: row;
+                         gap: 15px;
+                         margin-top: -10px;
+                         &GitHub {
+                              background: url("../../public/icons/github.png") no-repeat center /
+                                   cover;
+                              width: 50px;
+                              height: 50px;
+                              border: none;
+                              border-radius: 50%;
+                              transition: all 0.5s ease;
+                         }
+
+                         &Google {
+                              background: url("../../public/icons/google.png") no-repeat center /
+                                   cover;
+                              width: 50px;
+                              height: 50px;
+                              border: none;
+                              border-radius: 50%;
+                              transition: all 0.5s ease;
+                         }
+                         &Google:hover {
+                              background-color: rgb(139, 185, 245);
+                         }
+                         &GitHub:hover {
+                              background-color: rgb(139, 185, 245);
+                         }
+                    }
+               }
+          }
+          &Registration {
+               margin-bottom: 20px;
+               user-select: none;
+               &Label {
+                    font-weight: 700;
+                    font-size: 20px;
+                    cursor: grab;
+               }
+          }
+     }
+}
+html {
+     font-family: "Tektur", sans-serif;
+     font-optical-sizing: auto;
+     font-weight: 500;
+     font-style: normal;
+     overflow: hidden;
+     font-variation-settings: "wdth" 100;
+}

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { RefObject } from "react";
 import ProfileHOC from "./profileHOC";
 import Profile from "./profileChat";
 import ProfileMain from "./profile";
@@ -15,18 +15,25 @@ type typeHeaderChatBox = {
      ownUser: UserInterface;
      userIsDarkTheme: boolean;
      userThemeColorScheme: { dark: string[]; light: string[] };
+     setBigInfoChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
+     language: string;
+     container: RefObject<HTMLDivElement | null>;
 };
 const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
      fullfield,
      targetChat,
      targetNumberOutUser,
+     setBigInfoChatOpen,
      ownUser,
      userIsDarkTheme,
-     userThemeColorScheme
+     userThemeColorScheme,
+     language,
+     container
 }) => {
      const [isOpenMenu, setIsOpenMenu] = React.useState<boolean>(false);
      const [isSearch, setIsSearch] = React.useState<boolean>(false);
      const [profileOpen, setProfileOpen] = React.useState<boolean>(false);
+
      React.useEffect(() => {
           const open = (event: any) => {
                const element = event.target as HTMLElement;
@@ -66,16 +73,25 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                <Profile
                     setProfileOpen={setProfileOpen}
                     profileOpen={profileOpen}
-                    img={ownUser?.userImage ?? targetChat?.imagesChat}
+                    lastSendImg={ownUser?.userImage ?? targetChat?.imagesChat}
                     name={ownUser?.userName ?? ""}
                     statusInfo={true}
                     lastStatus={new Date()}
                     targetChat={targetChat}
                     type={targetChat?.type}
+                    setBigChatIsOpen={setBigInfoChatOpen}
+                    language={language}
                ></Profile>
 
                <div className="headerChatBox__toolbar">
-                    {isSearch ? <SearchInput targetChat={targetChat}></SearchInput> : null}
+                    {isSearch ? (
+                         <SearchInput
+                              targetChat={targetChat}
+                              ownUserImage={ownUser?.userImage}
+                              language={language}
+                              container={container}
+                         ></SearchInput>
+                    ) : null}
                     <button
                          onClick={() => setIsSearch(!isSearch)}
                          className="headerChatBox__moreOptions"
@@ -93,9 +109,10 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                          targetChat={targetChat}
                          id={targetChat?.chatId}
                          setProfileOpen={setProfileOpen}
+                         language={language}
                     ></HeaderMessageMenu>
                ) : null}
-               {profileOpen ? (
+               {profileOpen && targetChat?.type !== "SAVED" ? (
                     <NewProfile
                          userIsDarkTheme={userIsDarkTheme}
                          userThemeColorScheme={userThemeColorScheme}
@@ -109,11 +126,12 @@ const HeaderChatBox: React.FC<typeHeaderChatBox> = ({
                          instagram={ownUser?.userInstagramInfo ?? ""}
                          img={ownUser?.userImage ?? ""}
                          setProfileOpen={setProfileOpen}
+                         language={language}
                          as={"p"}
                     ></NewProfile>
                ) : null}
 
-               {targetChat?.pinnedMessage.length >= 1 ? (
+               {targetChat?.pinnedMessage?.length >= 1 ? (
                     <PinnedMessages
                          targetChatId={targetChat.chatId}
                          pinnedMessages={targetChat.pinnedMessage}

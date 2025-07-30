@@ -1,10 +1,12 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { title } from "process";
 import { typeBoxMessageItem } from "../components/chatBoxMessageItem";
 import { RootState } from "./store";
-import undefinedIcon from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
+import { headers } from "next/headers";
+import { useRouter } from "next/navigation";
+import { FORMERR } from "dns";
 
-type ChatInfo = {
+export type ChatInfo = {
      chatImage: string;
      chatName: string;
      chatDescription: string;
@@ -16,7 +18,11 @@ type ChatInfo = {
      flagCheck: boolean;
      messageImage: string;
 };
-type GroupChat = {
+export enum roles {
+     admin = "ADMIN",
+     guest = "GUEST"
+}
+export type GroupChat = {
      messages: typeBoxMessageItem[];
      joinUsers: UserInterfaceForJoinUsers[];
      chatId: string;
@@ -29,7 +35,7 @@ type GroupChat = {
 };
 export type DuoChat = {
      messages: typeBoxMessageItem[];
-     joinUsers: { one: UserInterface; two: UserInterface };
+     joinUsers: { one: UserInterfaceForJoinUsers; two: UserInterfaceForJoinUsers };
      chatId: string;
      chatDateInitialization: string;
      imagesChat: string;
@@ -38,7 +44,7 @@ export type DuoChat = {
      pinnedMessage: string[];
      chatOperation: number;
 };
-type ChannelChat = {
+export type ChannelChat = {
      messages: typeBoxMessageItem[];
      joinUsers: UserInterfaceForJoinUsers[];
      chatId: string;
@@ -49,7 +55,7 @@ type ChannelChat = {
      pinnedMessage: string[];
      chatOperation: number;
 };
-type SavedMessagesChat = {
+export type SavedMessagesChat = {
      messages: typeBoxMessageItem[];
      chatId: string;
      joinUsers: null;
@@ -61,23 +67,6 @@ type SavedMessagesChat = {
      chatOperation: number;
 };
 export type Chats = GroupChat | DuoChat | ChannelChat | SavedMessagesChat;
-export interface UserInterface {
-     userId: string;
-     userName: string;
-     userEmail: string;
-     userPassword: string;
-     userDateRegistred: string;
-     userTelegramInfo: string;
-     userInstagramInfo: string;
-     userIsOnline: boolean;
-     userChats: Chats[];
-     userFriends: string[] | string;
-     userImage: string;
-     userGroups: number;
-     userDescription: string;
-     userThemeColorShceme: { dark: string[]; light: string[] };
-     userIsDarkTheme: boolean;
-}
 export interface UserInterfaceForJoinUsers {
      userId: string;
      userName: string;
@@ -91,9 +80,82 @@ export interface UserInterfaceForJoinUsers {
      userImage: string;
      userGroups: number;
      userDescription: string;
+     userChatID?: string;
+     userRole?: roles;
+}
+export interface UserInterface {
+     userId: string;
+     userName: string;
+     userEmail: string;
+     userPassword: string;
+     userDateRegistred: string;
+     userTelegramInfo: string;
+     userInstagramInfo: string;
+     userIsOnline: boolean;
+     userChats: Chats[];
+     userFriends: string[] | string;
+     userImage: string;
+     userContacts: UserInterfaceForJoinUsers[] | [];
+     userGroups: number;
+     userDescription: string;
+     userThemeColorShceme: { dark: string[]; light: string[] };
+     userIsDarkTheme: boolean;
+     userLanguage: "ENGLISH" | "RUSSIAN";
 }
 
+export const fetchUserData = createAsyncThunk("getData", async () => {
+     const userName: string | null = localStorage.getItem("USERNAME");
+     if (userName) {
+          console.log("АЙДИ", userName);
+
+          const UserData = await fetch(
+               "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
+               { headers: { "Content-Type": "application/json" }, method: "GET" }
+          );
+          const data = await UserData.json();
+          let user: UserInterface | null = null;
+          for (const value of Object.values(data) as UserInterface[]) {
+               if (value.userName === userName) {
+                    user = value;
+               }
+          }
+          if (user) {
+               user.userThemeColorShceme = {
+                    dark: [
+                         "linear-gradient(135deg, #252b42, #1b2238, #2a3555)",
+                         "linear-gradient(135deg, #252b42, #1b2238, #2a3555)",
+                         "#b3afaf",
+                         "rgb(62 75 112)",
+                         "linear-gradient(135deg, rgb(0 10 146), rgb(4 6 15))",
+                         "rgb(128 125 155)",
+                         "#565677",
+                         "linear-gradient(90deg, #121959, #172179, #384194)",
+                         "#192377",
+                         "linear-gradient(90deg, #1a215fb6, #202a86b4, #384194b2)",
+                         "linear-gradient(90deg, #1a215fb6, #202a86b4, #384194b2)"
+                    ],
+                    light: [
+                         "linear-gradient(135deg, rgb(53 53 53), rgb(184 179 179), rgb(84 84 84))",
+                         "white",
+                         "black",
+                         "white",
+                         "linear-gradient(135deg, #d0f0fd, #a0d8ef, #70b7e0)",
+                         "#b0afb9",
+                         "#e0e0e0",
+                         "linear-gradient(190deg, #b0b4d3, #848cd3, #9496a7)",
+                         "#b6bbe6",
+                         "linear-gradient(195deg, #d39999, #abe7ff, #caace2)",
+                         "linear-gradient(135deg, rgb(255, 209, 148), rgb(152 220 247 / 73%), rgb(193 213 227 / 75%), rgb(122 143 219 / 75%))"
+                    ]
+                    // 1 bPanel 2 header 3 strings, 4messagesB,5 chatBoxB, 6 messageMenu 7 messageMenuB 8 settingsBody 9 settingTop 10 module 11 profile
+               };
+               return user;
+          } else {
+          }
+     }
+});
 export const mainState: UserInterface = {
+     userLanguage: "RUSSIAN",
      userId: "123",
      userName: "Starkov",
      userEmail: "valuznnicatem@gmail.com",
@@ -102,6 +164,7 @@ export const mainState: UserInterface = {
      userTelegramInfo: "no",
      userInstagramInfo: "no",
      userIsOnline: true,
+     userContacts: [],
      userFriends: ["wewfwef", "qwdqwdqwd", "dwqwdqw"],
      userImage:
           "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -111,7 +174,7 @@ export const mainState: UserInterface = {
           dark: [
                "linear-gradient(135deg, #252b42, #1b2238, #2a3555)",
                "linear-gradient(135deg, #252b42, #1b2238, #2a3555)",
-               "white",
+               "#b3afaf",
                "rgb(62 75 112)",
 
                "linear-gradient(135deg, rgb(0 10 146), rgb(4 6 15))",
@@ -128,7 +191,6 @@ export const mainState: UserInterface = {
                "black",
                "white",
                "linear-gradient(135deg, #d0f0fd, #a0d8ef, #70b7e0)",
-
                "#b0afb9",
                "#e0e0e0",
                "linear-gradient(190deg, #b0b4d3, #848cd3, #9496a7)",
@@ -153,21 +215,23 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "GROUP",
+                         countView: 0
                     }
                ],
                joinUsers: [],
                chatId: "123ft13f",
                chatDateInitialization: new Date("2022-02-22T00:00:00Z").toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Description....",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Чатик",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "aaaaaaa",
                     lastUserName: "trema",
-                    value: "блять идите нахуй",
+                    value: "что-то",
                     lastMessageDate: new Date("2022-02-22T00:00:00Z").toString(),
                     flagCheck: false,
                     messageImage: ""
@@ -185,7 +249,9 @@ export const mainState: UserInterface = {
                          checkFlag: true,
                          isEdit: false,
                          isLike: false,
-                         id: 8347
+                         id: 8347,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Да! Это было просто 🔥🔥🔥",
@@ -194,7 +260,9 @@ export const mainState: UserInterface = {
                          checkFlag: true,
                          isEdit: false,
                          isLike: true,
-                         id: 2910
+                         id: 2910,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Я чуть не прослезился в конце… 😭",
@@ -203,7 +271,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 1623
+                         id: 1623,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Кто-нибудь поймёт, что на самом деле произошло с героиней?!",
@@ -212,7 +282,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 4578
+                         id: 4578,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Теория: она — инкарнация древнего духа 😉",
@@ -221,7 +293,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 7681
+                         id: 7681,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Хаха, горячо! Но я больше склоняюсь к тому, что это её прошлое увидели в видении.",
@@ -230,7 +304,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 9054
+                         id: 9054,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Видение? Может быть… Но тогда зачем тот зловещий символ на стене?",
@@ -239,7 +315,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 3342
+                         id: 3342,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Я нашёл в интернете, что этот символ связан с культом забытых богов.",
@@ -248,7 +326,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: true,
-                         id: 7290
+                         id: 7290,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Интересно… Надо глянуть на старые артефакты в музее.",
@@ -257,7 +337,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 8115
+                         id: 8115,
+                         type: "GROUP",
+                         countView: 0
                     },
                     {
                          value: "Предлагаю встретиться в субботу и обсудить все теории лично!",
@@ -266,7 +348,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: 5462
+                         id: 5462,
+                         type: "GROUP",
+                         countView: 0
                     }
                ],
                joinUsers: [
@@ -280,9 +364,10 @@ export const mainState: UserInterface = {
                          userInstagramInfo: "@olga_insta",
                          userIsOnline: true,
                          userFriends: ["u2", "u3", "u4", "u5"],
-                         userImage: "https://example.com/avatars/olga.png",
+                         userImage: "",
                          userGroups: 3,
-                         userDescription: "Киноман со стажем"
+                         userDescription: "Киноман со стажем",
+                         userRole: roles.guest
                     },
                     {
                          userId: "u2",
@@ -294,9 +379,10 @@ export const mainState: UserInterface = {
                          userInstagramInfo: "@ivan_insta",
                          userIsOnline: false,
                          userFriends: ["u1", "u3"],
-                         userImage: "https://example.com/avatars/ivan.png",
+                         userImage: "http",
                          userGroups: 2,
-                         userDescription: "Любитель теорий заговора"
+                         userDescription: "Любитель теорий заговора",
+                         userRole: roles.guest
                     },
                     {
                          userId: "u3",
@@ -308,9 +394,11 @@ export const mainState: UserInterface = {
                          userInstagramInfo: "@sergey_insta",
                          userIsOnline: false,
                          userFriends: ["u1", "u2", "u5"],
-                         userImage: "https://example.com/avatars/sergey.png",
+                         userImage: "htey.png",
                          userGroups: 4,
-                         userDescription: "Исследователь символов"
+                         userDescription: "Исследователь символов",
+
+                         userRole: roles.guest
                     },
                     {
                          userId: "u4",
@@ -322,9 +410,10 @@ export const mainState: UserInterface = {
                          userInstagramInfo: "@marina_insta",
                          userIsOnline: true,
                          userFriends: ["u1", "u3"],
-                         userImage: "https://example.com/avatars/marina.png",
+                         userImage: "htna.png",
                          userGroups: 1,
-                         userDescription: "Любительница музеев"
+                         userDescription: "Любительница музеев",
+                         userRole: roles.admin
                     },
                     {
                          userId: "u5",
@@ -336,25 +425,26 @@ export const mainState: UserInterface = {
                          userInstagramInfo: "@alex_insta",
                          userIsOnline: true,
                          userFriends: ["u1", "u2", "u3"],
-                         userImage: "https://example.com/avatars/alex.png",
+                         userImage: "htex.png",
                          userGroups: 2,
-                         userDescription: "Организатор встреч"
+                         userDescription: "Организатор встреч",
+                         userRole: roles.guest
                     }
                ],
                chatId: "grp123",
                chatDateInitialization: new Date("2025-06-27T10:00:00Z").toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Бурные обсуждения нового эпизода любимого сериала",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Киноманы Unite!",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "Обсуждение серии",
                     lastUserName: "Alex",
                     value: "Предлагаю встретиться в субботу и обсудить все теории лично!",
                     lastMessageDate: new Date("2025-06-27T10:32:27Z").toString(),
                     flagCheck: false,
-                    messageImage: "#"
+                    messageImage: ""
                }
           },
 
@@ -370,7 +460,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isLike: false,
                          isEdit: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Привет, как дела?",
@@ -379,7 +471,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Хорошо, а ты как?",
@@ -388,7 +482,9 @@ export const mainState: UserInterface = {
                          checkFlag: true,
                          isEdit: false,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Тоже неплохо. Готов к завтрашнему митингу?",
@@ -397,7 +493,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Да, презентация почти готова.",
@@ -406,7 +504,9 @@ export const mainState: UserInterface = {
                          checkFlag: true,
                          isEdit: false,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Отлично. Жду твою часть вечером.",
@@ -415,7 +515,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     }
                ],
                joinUsers: {
@@ -423,14 +525,13 @@ export const mainState: UserInterface = {
                          userId: "123",
                          userName: "Starkov",
                          userEmail: "valuznnicatem@gmail.com",
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userPassword: "93334562aaa",
                          userDateRegistred: new Date("2022-02-22T00:00:00Z").toString(),
                          userTelegramInfo: "no",
                          userInstagramInfo: "no",
                          userIsOnline: true,
-                         userChats: [],
-                         userIsDarkTheme: false,
+
                          userFriends: ["Sergey"],
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -446,9 +547,7 @@ export const mainState: UserInterface = {
                          userTelegramInfo: "qwfqweqfwfq",
                          userInstagramInfo: "wwafawffaw",
                          userIsOnline: false,
-                         userThemeColorShceme: { dark: [""], light: [""] },
-                         userIsDarkTheme: false,
-                         userChats: [],
+
                          userFriends: [],
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -459,15 +558,15 @@ export const mainState: UserInterface = {
                pinnedMessage: [],
                chatId: "duo123",
                chatDateInitialization: new Date("2022-02-22T00:00:00Z").toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "News Channel",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Вести",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "aaaaaaa",
                     lastUserName: "trema",
-                    value: "блять идите нахуй",
+                    value: "что-то",
                     lastMessageDate: new Date("2022-02-22T00:00:00Z").toString(),
                     flagCheck: false,
                     messageImage: ""
@@ -479,22 +578,15 @@ export const mainState: UserInterface = {
                chatOperation: 0,
                messages: [
                     {
-                         value: "Содержание...",
-                         date: new Date("2022-02-22T00:00:00Z").toString(),
-                         author: "Starkov",
-                         isEdit: false,
-                         checkFlag: false,
-                         isLike: false,
-                         id: Math.floor(Math.random() * 10000)
-                    },
-                    {
                          value: "Сегодня в выпуске — важные новости из мира технологий.Сегодня в выпуске — важные новости из мира технологий.Сегодня в выпуске — важные новости из мира технологий.Сегодня в выпуске — важные новости из мира технологий.Сегодня в выпуске — важные новости из мира технологий.Сегодня в выпуске — важные новости из мира технологий.Сегодня в выпуске — важные новости из мира технологий.",
                          date: new Date("2022-02-22T08:00:00Z").toString(),
                          author: "Editor",
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
                     },
                     {
                          value: "Google представил новый AI-сервис.",
@@ -503,7 +595,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
                     },
                     {
                          value: "Apple анонсировал WWDC 2025.",
@@ -511,23 +605,80 @@ export const mainState: UserInterface = {
                          author: "Editor",
                          isEdit: false,
                          checkFlag: false,
-                         isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         isLike: false,
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
+                    },
+                    {
+                         value: "Apple анонсировал WWDC 2025.",
+                         date: new Date("2022-02-22T08:10:00Z").toString(),
+                         author: "Editor",
+                         isEdit: false,
+                         checkFlag: false,
+                         isLike: false,
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
+                    },
+                    {
+                         value: "Apple анонсировал WWDC 2025.",
+                         date: new Date("2022-02-22T08:10:00Z").toString(),
+                         author: "Editor",
+                         isEdit: false,
+                         checkFlag: false,
+                         isLike: false,
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
+                    },
+                    {
+                         value: "Apple анонсировал WWDC 2025.",
+                         date: new Date("2022-02-22T08:10:00Z").toString(),
+                         author: "Editor",
+                         isEdit: false,
+                         checkFlag: false,
+                         isLike: false,
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
+                    },
+                    {
+                         value: "Apple анонсировал WWDC 2025.",
+                         date: new Date("2022-02-22T08:10:00Z").toString(),
+                         author: "Editor",
+                         isEdit: false,
+                         checkFlag: false,
+                         isLike: false,
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
+                    },
+                    {
+                         value: "Apple анонсировал WWDC 2025.",
+                         date: new Date("2022-02-22T08:10:00Z").toString(),
+                         author: "Editor",
+                         isEdit: false,
+                         checkFlag: false,
+                         isLike: false,
+                         id: Math.floor(Math.random() * 10000),
+                         type: "CHANNEL",
+                         countView: 0
                     }
                ],
 
                joinUsers: [],
                chatId: "chan001",
                chatDateInitialization: new Date().toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "News Channel",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Вести",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "aaaaaaa",
                     lastUserName: "trema",
-                    value: "блять идите нахуй",
+                    value: "что-то",
                     lastMessageDate: new Date().toString(),
                     flagCheck: false,
                     messageImage: ""
@@ -545,7 +696,9 @@ export const mainState: UserInterface = {
                          checkFlag: true,
                          isEdit: false,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Привет! Всё хорошо. У тебя как?",
@@ -554,7 +707,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Тоже отлично. Над чем сейчас работаешь?",
@@ -563,7 +718,9 @@ export const mainState: UserInterface = {
                          checkFlag: true,
                          isEdit: false,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Делаю макеты для нового лендинга.",
@@ -572,7 +729,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Можешь показать позже?",
@@ -581,7 +740,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: false,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Конечно, к 18:00 скину в чат.",
@@ -590,7 +751,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     }
                ],
 
@@ -600,13 +763,12 @@ export const mainState: UserInterface = {
                          userName: "Starkov",
                          userEmail: "starkov@mail.ru",
                          userPassword: "supersecure123",
-                         userIsDarkTheme: false,
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userDateRegistred: new Date("2021-01-15T00:00:00Z").toString(),
                          userTelegramInfo: "t.me/starkov",
                          userInstagramInfo: "@starkovgram",
                          userIsOnline: false,
-                         userChats: [],
+
                          userFriends: ["Alex", "Max"],
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -617,14 +779,14 @@ export const mainState: UserInterface = {
                          userId: "101",
                          userName: "Olga",
                          userEmail: "olga@example.com",
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userPassword: "qwerty123",
-                         userIsDarkTheme: false,
+
                          userDateRegistred: new Date("2023-03-12T00:00:00Z").toString(),
                          userTelegramInfo: "olgaTG",
                          userInstagramInfo: "olgaInsta",
                          userIsOnline: true,
-                         userChats: [],
+
                          userFriends: ["Lena"],
                          userImage: "https://photocentra.ru/images/main80/802356_main.jpg",
                          userGroups: 7,
@@ -633,12 +795,12 @@ export const mainState: UserInterface = {
                },
                chatId: "duo789",
                chatDateInitialization: new Date("2023-06-01T12:00:00Z").toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Разговоры о работе",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Работа",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "Обсуждение задач",
                     lastUserName: "Olga",
                     value: "Нужно обсудить дедлайны",
@@ -662,7 +824,9 @@ export const mainState: UserInterface = {
                          image: [
                               "https://images.contentstack.io/v3/assets/blt00454ccee8f8fe6b/blt574119fc8abf8dad/60ab28733aac347374b5b0f0/UK_Iceland_Iceland_Header.jpg"
                          ],
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Работаю над ним. Осталось доделать стили.",
@@ -671,7 +835,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Окей, жду тогда финальную версию.",
@@ -680,7 +846,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Загружу в репозиторий вечером.",
@@ -693,7 +861,9 @@ export const mainState: UserInterface = {
                               "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1zmqm4.img?w=1600&h=900&m=4&q=47",
                               "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1zmqm4.img?w=1600&h=900&m=4&q=47"
                          ],
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Не забудь про адаптив!",
@@ -702,7 +872,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: false,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     }
                ],
                joinUsers: {
@@ -711,13 +883,12 @@ export const mainState: UserInterface = {
                          userName: "Starkov",
                          userEmail: "starkovdev@example.com",
                          userPassword: "securepass",
-                         userIsDarkTheme: false,
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userDateRegistred: new Date("2020-09-09T00:00:00Z").toString(),
                          userTelegramInfo: "devStarkov",
                          userInstagramInfo: "stark_dev",
                          userIsOnline: true,
-                         userChats: [],
+
                          userFriends: [],
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -728,14 +899,14 @@ export const mainState: UserInterface = {
                          userId: "303",
                          userName: "Dima",
                          userEmail: "dima@webdev.com",
-                         userIsDarkTheme: false,
+
                          userPassword: "frontend123",
                          userDateRegistred: new Date("2023-07-18T00:00:00Z").toString(),
                          userTelegramInfo: "dimaWeb",
                          userInstagramInfo: "dimaInsta",
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userIsOnline: false,
-                         userChats: [],
+
                          userFriends: [],
                          userImage:
                               "https://avatars.mds.yandex.net/i?id=56428907fa215bcd0400a3a6144b694c_l-5232252-images-thumbs&n=13",
@@ -745,12 +916,12 @@ export const mainState: UserInterface = {
                },
                chatId: "dev456",
                chatDateInitialization: new Date("2023-10-01T14:00:00Z").toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Работа над сайтом",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Проект Х",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "Фронтенд задачи",
                     lastUserName: "Dima",
                     value: "Почти готово!",
@@ -771,7 +942,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Окей, подтвердила время",
@@ -780,7 +953,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Нужно обсудить новый релизgwkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgwkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkgwkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
@@ -789,7 +964,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: false,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "У меня есть пара идей",
@@ -798,7 +975,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          checkFlag: true,
                          isLike: true,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     },
                     {
                          value: "Супер! Подготовь слайды, пожалуйста",
@@ -807,7 +986,9 @@ export const mainState: UserInterface = {
                          checkFlag: false,
                          isEdit: false,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "DUO",
+                         countView: 0
                     }
                ],
                joinUsers: {
@@ -815,14 +996,13 @@ export const mainState: UserInterface = {
                          userId: "123",
                          userName: "Starkov",
                          userEmail: "stark_chat@example.com",
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userPassword: "pass1234",
                          userDateRegistred: new Date("2022-12-12T00:00:00Z").toString(),
                          userTelegramInfo: "starkmeeting",
                          userInstagramInfo: "starkinsta",
                          userIsOnline: true,
-                         userIsDarkTheme: false,
-                         userChats: [],
+
                          userFriends: ["Kirill", "Nikita"],
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -834,13 +1014,13 @@ export const mainState: UserInterface = {
                          userName: "Anna",
                          userEmail: "anna@example.com",
                          userPassword: "myAnnaPass",
-                         userIsDarkTheme: false,
+
                          userDateRegistred: new Date("2023-11-10T00:00:00Z").toString(),
                          userTelegramInfo: "anna_tg",
-                         userThemeColorShceme: { dark: [""], light: [""] },
+
                          userInstagramInfo: "anna_ig",
                          userIsOnline: true,
-                         userChats: [],
+
                          userFriends: [],
                          userImage:
                               "https://avatars.mds.yandex.net/i?id=53e858729b32a2e2a6a559c4a0e61c050c10436c-5179294-images-thumbs&n=13",
@@ -850,12 +1030,12 @@ export const mainState: UserInterface = {
                },
                chatId: "conf123",
                chatDateInitialization: new Date("2023-12-12T09:00:00Z").toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Встречи команды",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Созвоны",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "Командная синхронизация",
                     lastUserName: "Anna",
                     value: "Подтверждаю время",
@@ -877,22 +1057,24 @@ export const mainState: UserInterface = {
                          author: "Me",
                          checkFlag: true,
                          isLike: false,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+                         type: "SAVED",
+                         countView: 0
                     }
                ],
                joinUsers: null,
 
-               chatId: "saved001",
+               chatId: "saved",
                chatDateInitialization: new Date().toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Saved notes",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Закладки",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "aaaaaaa",
                     lastUserName: "trema",
-                    value: "блять идите нахуй",
+                    value: "что-то",
                     lastMessageDate: new Date().toString(),
                     flagCheck: false,
                     messageImage: ""
@@ -912,7 +1094,9 @@ export const mainState: UserInterface = {
                          isEdit: false,
                          isLike: false,
                          countView: 0,
-                         id: Math.floor(Math.random() * 10000)
+                         id: Math.floor(Math.random() * 10000),
+
+                         type: "CHANNEL"
                     }
                ],
                joinUsers: [
@@ -931,7 +1115,8 @@ export const mainState: UserInterface = {
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
                          userGroups: 54,
-                         userDescription: "2332325352235235"
+                         userDescription: "2332325352235235",
+                         userRole: roles.admin
                     },
                     {
                          userId: "456",
@@ -948,7 +1133,8 @@ export const mainState: UserInterface = {
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
                          userGroups: 54,
-                         userDescription: "23542356455234"
+                         userDescription: "23542356455234",
+                         userRole: roles.admin
                     },
                     {
                          userId: "123",
@@ -966,7 +1152,8 @@ export const mainState: UserInterface = {
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
                          userGroups: 54,
 
-                         userDescription: "23235T3245"
+                         userDescription: "23235T3245",
+                         userRole: roles.admin
                     },
                     {
                          userId: "456",
@@ -984,7 +1171,8 @@ export const mainState: UserInterface = {
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
                          userGroups: 54,
-                         userDescription: "23352324"
+                         userDescription: "23352324",
+                         userRole: roles.admin
                     },
                     {
                          userId: "123",
@@ -1002,7 +1190,8 @@ export const mainState: UserInterface = {
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
                          userGroups: 54,
 
-                         userDescription: "325354342"
+                         userDescription: "325354342",
+                         userRole: roles.admin
                     },
                     {
                          userId: "456",
@@ -1020,20 +1209,21 @@ export const mainState: UserInterface = {
                          userImage:
                               "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
                          userGroups: 54,
-                         userDescription: "2282282282228228222822282822828828282"
+                         userDescription: "2282282282228228222822282822828828282",
+                         userRole: roles.admin
                     }
                ],
                chatId: "1231231212313",
                chatDateInitialization: new Date().toString(),
-               imagesChat: "#",
+               imagesChat: "",
                info: {
                     chatDescription: "Channel",
-                    chatImage: "#",
+                    chatImage: "",
                     chatName: "Закладки",
-                    lastSendImg: undefinedIcon.src,
+                    lastSendImg: "",
                     title: "aaaaaaa",
                     lastUserName: "trema",
-                    value: "блять идите нахуй",
+                    value: "что-то",
                     lastMessageDate: new Date().toString(),
                     flagCheck: false,
                     messageImage: ""
@@ -1045,6 +1235,47 @@ export const mainState: UserInterface = {
 const User = createSlice({
      name: "mainState",
      initialState: mainState,
+     extraReducers: (builder) => {
+          builder
+               .addCase(fetchUserData.pending, (state) => {})
+               .addCase(fetchUserData.rejected, (state) => {})
+               .addCase(fetchUserData.fulfilled, (state, action) => {
+                    const readyChats: Chats[] = [];
+                    const readyContacts = [];
+                    for (const value of Object.values(action.payload?.userChats!)) {
+                         const typedValue = value as Chats;
+                         readyChats.push(typedValue);
+                    }
+
+                    if (action.payload?.userContacts) {
+                         for (const value of Object.values(action.payload?.userContacts!)) {
+                              const typedValue = value as UserInterfaceForJoinUsers;
+                              readyContacts.push(typedValue);
+                         }
+                    }
+
+                    const readyUserData: UserInterface = {
+                         userChats: readyChats,
+                         userContacts: readyContacts,
+                         userDateRegistred: action?.payload?.userDateRegistred!,
+                         userDescription: action.payload?.userDescription!,
+                         userEmail: action.payload?.userEmail!,
+                         userFriends: action.payload?.userFriends!,
+                         userGroups: action.payload?.userGroups!,
+                         userId: action.payload?.userId!,
+                         userImage: action.payload?.userImage!,
+                         userInstagramInfo: action.payload?.userInstagramInfo!,
+                         userIsDarkTheme: action.payload?.userIsDarkTheme!,
+                         userIsOnline: action.payload?.userIsOnline!,
+                         userLanguage: action.payload?.userLanguage!,
+                         userName: action.payload?.userName!,
+                         userPassword: action.payload?.userPassword!,
+                         userTelegramInfo: action.payload?.userTelegramInfo!,
+                         userThemeColorShceme: action.payload?.userThemeColorShceme!
+                    };
+                    return readyUserData;
+               });
+     },
      reducers: {
           setDataByChatId: (state, action: PayloadAction<{ ID: string; newChat: Chats }>) => {
                if (state.userChats) {
@@ -1264,6 +1495,9 @@ const User = createSlice({
                               targetChat.messages.forEach((message: typeBoxMessageItem) => {
                                    if (message.id === action.payload.idMessage) {
                                         message.checkFlag = true;
+                                        message.type === "CHANNEL" || message.type === "channel"
+                                             ? (message.countView += 1)
+                                             : null;
                                    }
                               });
                               return targetChat;
@@ -1362,55 +1596,54 @@ const User = createSlice({
           },
           setCreateNewGroup: (
                state,
-               action: PayloadAction<{ img: string; name: string; description: string }>
+               action: PayloadAction<{ img: string; name: string; description: string; id: string }>
           ) => {
-               if (state.userChats) {
-                    const newGroup: GroupChat = {
-                         messages: [],
-                         joinUsers: [
-                              {
-                                   userDateRegistred: state.userDateRegistred,
-                                   userDescription: state.userDescription,
-                                   userFriends: state.userFriends,
-                                   userId: state.userId,
-                                   userEmail: state.userEmail,
-                                   userGroups: state.userGroups,
-                                   userImage: state.userImage,
-                                   userInstagramInfo: state.userInstagramInfo,
+               const newGroup: GroupChat = {
+                    messages: [],
+                    joinUsers: [
+                         {
+                              userDateRegistred: state.userDateRegistred,
+                              userDescription: state.userDescription,
+                              userFriends: state.userFriends,
+                              userId: state.userId,
+                              userEmail: state.userEmail,
+                              userGroups: state.userGroups,
+                              userImage: state.userImage,
+                              userInstagramInfo: state.userInstagramInfo,
 
-                                   userIsOnline: state.userIsOnline,
-                                   userName: state.userName,
-                                   userPassword: state.userPassword,
-                                   userTelegramInfo: state.userTelegramInfo
-                              }
-                         ],
-                         chatId: Math.floor(Math.random() * 10000000).toString(),
-                         chatDateInitialization: new Date().toString(),
-                         imagesChat: action.payload.img,
-                         info: {
-                              chatDescription: action.payload.description,
-                              chatImage: action.payload.img,
-                              chatName: action.payload.name,
-                              lastMessageDate: "",
-                              lastUserName: "",
-                              lastSendImg: action.payload.img,
-                              title: action.payload.name,
-                              flagCheck: false,
-                              value: "",
-                              messageImage: ""
-                         },
-                         type: "GROUP",
-                         pinnedMessage: [],
-                         chatOperation: 0
-                    };
-                    const chats: Chats[] = state.userChats;
-                    chats.unshift(newGroup);
-                    state.userChats = chats;
-               }
+                              userIsOnline: state.userIsOnline,
+                              userName: state.userName,
+                              userPassword: state.userPassword,
+                              userTelegramInfo: state.userTelegramInfo,
+                              userRole: roles.admin
+                         }
+                    ],
+                    chatId: action.payload.id,
+                    chatDateInitialization: new Date().toString(),
+                    imagesChat: action.payload.img,
+                    info: {
+                         chatDescription: action.payload.description,
+                         chatImage: action.payload.img,
+                         chatName: action.payload.name,
+                         lastMessageDate: "",
+                         lastUserName: "",
+                         lastSendImg: action.payload.img,
+                         title: action.payload.name,
+                         flagCheck: false,
+                         value: "",
+                         messageImage: ""
+                    },
+                    type: "GROUP",
+                    pinnedMessage: [],
+                    chatOperation: 0
+               };
+               const chats: Chats[] = state.userChats;
+               chats.unshift(newGroup);
+               state.userChats = chats;
           },
           setCreateNewChannel: (
                state,
-               action: PayloadAction<{ img: string; name: string; description: string }>
+               action: PayloadAction<{ img: string; name: string; description: string; id: string }>
           ) => {
                if (state.userChats) {
                     const newChannel: ChannelChat = {
@@ -1429,10 +1662,11 @@ const User = createSlice({
                                    userIsOnline: state.userIsOnline,
                                    userName: state.userName,
                                    userPassword: state.userPassword,
-                                   userTelegramInfo: state.userTelegramInfo
+                                   userTelegramInfo: state.userTelegramInfo,
+                                   userRole: roles.admin
                               }
                          ],
-                         chatId: Math.floor(Math.random() * 10000000).toString(),
+                         chatId: action.payload.id,
                          chatDateInitialization: new Date().toString(),
                          imagesChat: action.payload.img,
                          info: {
@@ -1455,6 +1689,274 @@ const User = createSlice({
                     chats.unshift(newChannel);
                     state.userChats = chats;
                }
+          },
+          setAddNewContactAndChat: (
+               state,
+               action: PayloadAction<{ contact: UserInterfaceForJoinUsers; chatID: string }>
+          ) => {
+               const newContact = { ...action.payload.contact, userChatID: action.payload.chatID };
+               state.userContacts = Array.isArray(state.userContacts)
+                    ? [...state.userContacts, newContact]
+                    : [newContact];
+               const newDuoChat: DuoChat = {
+                    messages: [],
+                    joinUsers: {
+                         one: {
+                              userId: state.userId,
+                              userName: state.userName,
+                              userEmail: state.userEmail,
+                              userPassword: state.userPassword,
+                              userDateRegistred: state.userDateRegistred,
+                              userTelegramInfo: state.userTelegramInfo,
+                              userInstagramInfo: state.userInstagramInfo,
+                              userIsOnline: state.userIsOnline,
+                              userFriends: state.userFriends,
+                              userImage: state.userImage,
+                              userGroups: state.userGroups,
+                              userDescription: state.userDescription
+                         },
+                         two: action.payload.contact
+                    },
+                    chatId: action.payload.chatID,
+                    chatDateInitialization: new Date().toString(),
+                    imagesChat: "",
+                    info: {
+                         chatImage: "",
+                         chatName: "Новый чат",
+                         chatDescription: "",
+                         lastSendImg: "",
+                         title: "Новый чат",
+                         lastUserName: "",
+                         value: "",
+                         lastMessageDate: "",
+                         flagCheck: false,
+                         messageImage: ""
+                    },
+                    type: "DUO",
+                    pinnedMessage: [],
+                    chatOperation: 0
+               };
+               state.userChats = [newDuoChat, ...state.userChats];
+          },
+          setAddContactToGroup: (
+               state,
+               action: PayloadAction<{ idChat: string; idContact: string }>
+          ) => {
+               const targetChat: Chats[] = state.userChats.filter(
+                    (chat: Chats) => chat.chatId === action.payload.idChat
+               );
+               const targetChatObj: Chats = targetChat[0];
+               const targetContact: UserInterfaceForJoinUsers[] = state.userContacts.filter(
+                    (contact: UserInterfaceForJoinUsers) =>
+                         contact.userId === action.payload.idContact
+               );
+
+               const targetContactObj = targetContact[0];
+               targetContactObj.userRole = roles.guest;
+               console.log("ОБЬЕКТЫ: ", targetChatObj, targetContactObj);
+               Array.isArray(targetChatObj?.joinUsers)
+                    ? (targetChatObj.joinUsers = [...targetChatObj.joinUsers, targetContactObj])
+                    : null;
+               const newChats: Chats[] = state.userChats.map((chat: Chats) => {
+                    if (chat.chatId === targetChatObj?.chatId) {
+                         return targetChatObj;
+                    } else {
+                         return chat;
+                    }
+               });
+               state.userChats = newChats;
+          },
+          setDeleteContactFromChat: (
+               state,
+               action: PayloadAction<{ idChat: string; idContact: string }>
+          ) => {
+               const targetChat: Chats[] = state.userChats.filter(
+                    (chat: Chats) => chat.chatId === action.payload.idChat
+               );
+               const targetChatObj: Chats = targetChat[0];
+               if (
+                    (targetChatObj.joinUsers &&
+                         Array.isArray(targetChatObj.joinUsers) &&
+                         targetChatObj &&
+                         targetChatObj.type === "GROUP") ||
+                    targetChatObj.type === "CHANNEL"
+               ) {
+                    const targetContact: UserInterfaceForJoinUsers[] =
+                         targetChatObj.joinUsers.filter(
+                              (contact: UserInterfaceForJoinUsers) =>
+                                   contact.userId === action.payload.idContact
+                         );
+
+                    const targetContactObj = targetContact[0];
+                    const newJoinUsers: UserInterfaceForJoinUsers[] =
+                         targetChatObj.joinUsers.filter(
+                              (contact: UserInterfaceForJoinUsers) =>
+                                   contact.userId !== targetContactObj.userId
+                         );
+                    const resultChat = {
+                         ...targetChatObj,
+                         joinUsers: [...newJoinUsers]
+                    };
+                    const newChats: Chats[] = state.userChats.map((chat: Chats) => {
+                         if (chat.chatId === targetChatObj?.chatId) {
+                              return resultChat;
+                         } else {
+                              return chat;
+                         }
+                    });
+                    state.userChats = newChats;
+               }
+          },
+          setEditGroup: (
+               state,
+               action: PayloadAction<{
+                    idChat: string;
+                    newImage: string;
+                    newName: string;
+                    newDescription: string;
+               }>
+          ) => {
+               const newChats: Chats[] = state.userChats.map((chat: Chats) => {
+                    if (chat.chatId === action.payload.idChat) {
+                         return {
+                              ...chat,
+                              imagesChat: action.payload.newImage,
+                              info: {
+                                   ...chat.info,
+                                   chatDescription: action.payload.newDescription,
+                                   chatImage: action.payload.newImage,
+                                   chatName: action.payload.newName,
+                                   title: action.payload.newName
+                              }
+                         };
+                    } else {
+                         return chat;
+                    }
+               });
+               state.userChats = newChats;
+          },
+          setLikeMessage: (
+               state,
+               action: PayloadAction<{ idChat: string; idMessage: number; idUser: string }>
+          ) => {
+               const targetChat: Chats[] = state.userChats.filter(
+                    (chat: Chats) => chat.chatId === action.payload.idChat
+               );
+               const targetChatObj: Chats = targetChat[0];
+
+               targetChatObj.messages.forEach((message: typeBoxMessageItem) => {
+                    if (message.id === action.payload.idMessage) {
+                         if (message.usersLikes) {
+                              message.usersLikes.push({ userId: action.payload.idUser });
+                              message.isLike = true;
+                         } else {
+                              message.usersLikes = [{ userId: action.payload.idUser }];
+                              message.isLike = true;
+                         }
+                    }
+               });
+               const newChats: Chats[] = state.userChats.map((chat: Chats) => {
+                    if (chat.chatId === targetChatObj?.chatId) {
+                         return targetChatObj;
+                    } else {
+                         return chat;
+                    }
+               });
+               state.userChats = newChats;
+          },
+          setAddSavedMessage: (state, action: PayloadAction<{ message: typeBoxMessageItem }>) => {
+               const saved: Chats | undefined = state.userChats.find(
+                    (chat: Chats) => chat.type === "SAVED"
+               );
+               saved?.messages.push(action.payload.message);
+               state.userChats.map((chat: Chats) => {
+                    if (chat.type === "SAVED") {
+                         return saved;
+                    } else {
+                         return chat;
+                    }
+               });
+          },
+          setToggleLanguage: (state, action: PayloadAction<{ language: string }>) => {
+               state.userLanguage = action.payload.language as "ENGLISH" | "RUSSIAN";
+          },
+          setJoinToGroupAndChannel: (state, action: PayloadAction<{ targetChat: Chats }>) => {
+               const userForJoin: UserInterfaceForJoinUsers = {
+                    userDateRegistred: state.userDateRegistred,
+                    userDescription: state.userDescription,
+                    userEmail: state.userEmail,
+                    userFriends: state.userFriends,
+                    userGroups: state.userGroups,
+                    userId: state.userId,
+                    userImage: state.userImage,
+                    userInstagramInfo: state.userInstagramInfo,
+                    userIsOnline: state.userIsOnline,
+                    userName: state.userName,
+                    userPassword: state.userPassword,
+                    userTelegramInfo: state.userTelegramInfo,
+                    userRole: roles.guest
+               };
+               const targetChat: Chats = action.payload.targetChat;
+               if (targetChat.type !== "DUO" && targetChat.type !== "SAVED") {
+                    targetChat.joinUsers.push(userForJoin);
+               }
+               state.userChats.unshift(targetChat);
+          },
+          setPositionYToMessage: (
+               store,
+               action: PayloadAction<{ y: number; idChat: string; idMessage: number }>
+          ) => {
+               if (store.userChats) {
+                    const Chat: Chats[] = store.userChats.map((chat: Chats) => {
+                         if (chat.chatId === action.payload.idChat && chat.messages?.length >= 1) {
+                              return {
+                                   ...chat,
+                                   messages: chat?.messages.map((message: typeBoxMessageItem) => {
+                                        if (message.id === action.payload.idMessage) {
+                                             const newMessage: typeBoxMessageItem = message;
+                                             newMessage.positionY = action.payload.y;
+                                             return newMessage;
+                                        } else {
+                                             return message;
+                                        }
+                                   })
+                              };
+                         } else {
+                              return chat;
+                         }
+                    });
+
+                    store.userChats = Chat;
+               }
+          },
+          setPasswordAndEmail: (
+               state,
+               action: PayloadAction<{ password: string; login: string }>
+          ) => {
+               state.userId = Math.floor(Math.random() * 99).toString();
+               state.userName = action.payload.login;
+               state.userPassword = action.payload.password;
+          },
+          setUserData: (state, action: PayloadAction<{ user: UserInterface }>) => {
+               const user = action.payload.user;
+
+               state.userId = user.userId;
+               state.userName = user.userName;
+               state.userEmail = user.userEmail;
+               state.userPassword = user.userPassword;
+               state.userDateRegistred = user.userDateRegistred;
+               state.userTelegramInfo = user.userTelegramInfo;
+               state.userInstagramInfo = user.userInstagramInfo;
+               state.userIsOnline = user.userIsOnline;
+               state.userChats = user.userChats;
+               state.userFriends = user.userFriends;
+               state.userImage = user.userImage;
+               state.userContacts = user.userContacts;
+               state.userGroups = user.userGroups;
+               state.userDescription = user.userDescription;
+               state.userThemeColorShceme = user.userThemeColorShceme;
+               state.userIsDarkTheme = user.userIsDarkTheme;
+               state.userLanguage = user.userLanguage;
           }
      }
 });
@@ -1471,6 +1973,17 @@ export const {
      setEditMessageById,
      setTheme,
      setCreateNewGroup,
-     setCreateNewChannel
+     setCreateNewChannel,
+     setAddNewContactAndChat,
+     setAddContactToGroup,
+     setDeleteContactFromChat,
+     setEditGroup,
+     setLikeMessage,
+     setAddSavedMessage,
+     setToggleLanguage,
+     setJoinToGroupAndChannel,
+     setPositionYToMessage,
+     setPasswordAndEmail,
+     setUserData
 } = User.actions;
 export default User.reducer;

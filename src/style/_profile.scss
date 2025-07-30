@@ -1,12 +1,12 @@
 .profile {
-     position: absolute;
-     top: 8.5vh;
-     left: 32vw;
+     position: fixed;
+     top: 0.5vh;
+     left: 0vw;
      background: linear-gradient(90deg, #1a215fb6, #202a86b4, #384194b2);
-     width: 31%;
-     height: 85.5vh;
+     width: 100%;
+     height: 98vh;
      display: flex;
-     backdrop-filter: blur(5px);
+     backdrop-filter: blur(10px);
      flex-direction: column;
      align-items: center;
      border-radius: 10px;
@@ -14,7 +14,7 @@
      padding: 0px 0px 10px 0px;
      z-index: 20;
      justify-content: center;
-     animation: GOD 3.5s linear infinite;
+     animation: GOD 1s linear normal;
 
      &__topInfo {
           border-bottom-right-radius: 30px;
@@ -40,6 +40,15 @@
                background-color: rgba(0, 0, 0, 0.445);
                width: 100%;
                height: 65px;
+               &Close {
+                    background-color: transparent;
+                    transition: all 0.5s ease;
+                    border-radius: 5px;
+               }
+               &Close:hover {
+                    background-color: rgba(30, 133, 223, 0.521);
+                    border-radius: 5px;
+               }
           }
           &Title {
                letter-spacing: 10px;
@@ -51,6 +60,23 @@
                     width: 20vw;
                     height: 20vh;
                     border-radius: 10px;
+                    position: relative;
+                    object-fit: cover;
+                    object-position: center;
+                    &Edit {
+                         position: absolute;
+                         top: 24vh;
+
+                         left: 38.5vw;
+                         background: rgb(197, 219, 224, 0.8);
+                         width: 50px;
+                         height: 50px;
+                         border-radius: 20px;
+                    }
+                    &Edit:hover {
+                         background: white;
+                         background: rgb(197, 219, 224, 0.95);
+                    }
                }
                &Name {
                     text-align: center;
@@ -86,26 +112,29 @@
                display: flex;
                flex-direction: row;
                align-items: center;
-               align-self: center;
                justify-content: center;
-
+               margin-left: 35vw;
+               max-height: 80px;
+               gap: 30px;
                &Inner {
                     display: flex;
                     flex-direction: column;
-                    align-items: center;
+
                     justify-content: center;
 
+                    &Label {
+                         max-height: 10px;
+                         font-size: large;
+                         font-weight: 650;
+                    }
                     &Input {
                          border: none;
                          outline: none;
                          width: 170%;
-
                          height: 30px;
-                         margin-top: 10px;
+                         margin-top: 5px;
                          background-color: rgba(81, 88, 131, 0);
-                         font-size: 20px;
-                         text-align: center;
-                         font-weight: 600;
+                         font-size: 15px;
                          border-bottom: 2px solid grey;
                     }
                }
@@ -206,18 +235,19 @@
                flex-direction: row;
                align-items: end;
                justify-content: center;
-               max-height: 80px;
+               max-height: 70px;
                margin-left: 10px;
                gap: 30px;
                &Inner {
                     display: flex;
                     flex-direction: column;
                     align-items: start;
-                    padding-bottom: 35px;
+                    margin-top: 20px;
+
                     justify-content: center;
                     &Label {
                          max-height: 10px;
-                         margin-top: 20px;
+
                          font-size: large;
                          font-weight: 950;
                     }
@@ -225,8 +255,8 @@
                          border: none;
                          outline: none;
                          width: 170%;
-                         height: 30px;
-                         margin-top: 5px;
+                         height: 20px;
+                         margin-top: 20px;
                          background-color: rgba(81, 88, 131, 0);
                          font-size: 15px;
                          border-bottom: 2px solid grey;
@@ -244,18 +274,20 @@
 }
 @keyframes GOD {
      0% {
+          opacity: 0;
           box-shadow: -30px 0px 400px 50px;
      }
      25% {
+          opacity: 1;
           box-shadow: -30px 0px 200px 45px;
      }
      50% {
           box-shadow: -30px 0px 800px 25px;
      }
      75% {
-          box-shadow: -30px 0px 500px 5px;
+          box-shadow: 10px 0px 200px 2px;
      }
      100% {
-          box-shadow: -30px 0px 500px 50px;
+          box-shadow: 0px 0px 0px 0px;
      }
 }

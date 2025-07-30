@@ -17,7 +17,7 @@ import { RootState } from "../../StateManagment/store";
 export default function Main() {
      return (
           <Provider store={store}>
-               <ChatBox fullfield={true}></ChatBox>
+               <ChatBox language={"RUSSIAN"} fullfield={true}></ChatBox>
           </Provider>
      );
 }

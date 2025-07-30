@@ -1,16 +1,26 @@
 "use client";
-import { Chats } from "@/StateManagment/appSlice";
-import React, { Fragment } from "react";
+import { Chats, UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
+import React, { Fragment, RefObject } from "react";
 import { typeBoxMessageItem } from "./chatBoxMessageItem";
 import SearchPanelItem from "./searchPanelItem";
-type typeInput = { targetChat: Chats };
+import { useSelector } from "react-redux";
+import { RootState } from "@/StateManagment/store";
+
+type typeInput = {
+     targetChat: Chats;
+     ownUserImage: string;
+     language: string;
+     container: RefObject<HTMLDivElement | null>;
+};
 type searchValue = {
      name: string;
      value: string;
      img: string;
      date: string;
+     authorImage: string;
+     y: number;
 };
-const SearchInput: React.FC<typeInput> = ({ targetChat }) => {
+const SearchInput: React.FC<typeInput> = ({ targetChat, ownUserImage, language, container }) => {
      const [searchValue, setSearchValue] = React.useState<searchValue[]>([]);
      const [searchInput, setSearchInput] = React.useState<string>("");
      const handleSearchMessages = (
@@ -19,26 +29,53 @@ const SearchInput: React.FC<typeInput> = ({ targetChat }) => {
      ) => {
           const iValue = event.target.value as string;
           setSearchInput(iValue);
-          const newMessagesArray: typeBoxMessageItem[] = targetChat.messages.filter(
+          const newMessagesArray: typeBoxMessageItem[] = targetChat?.messages?.filter(
                (mess: typeBoxMessageItem) => {
                     return mess.value.toUpperCase().includes(iValue.toUpperCase());
                }
           );
-          const result = newMessagesArray.map((mess: typeBoxMessageItem) => {
+          const result = newMessagesArray?.map((mess: typeBoxMessageItem) => {
+               const authorImage: UserInterfaceForJoinUsers[] | undefined | string =
+                    targetChat.type !== "DUO" &&
+                    targetChat.type !== "SAVED" &&
+                    targetChat.joinUsers !== undefined
+                         ? targetChat.joinUsers.filter(
+                                (user: UserInterfaceForJoinUsers) => user.userName === mess.author
+                           )
+                         : mess.author === targetChat.joinUsers?.one.userName &&
+                           targetChat.type === "DUO"
+                         ? targetChat.joinUsers?.one.userImage
+                         : targetChat.type === "SAVED"
+                         ? ""
+                         : targetChat.joinUsers?.two.userImage;
+
                return {
                     name: mess.author,
                     value: mess.value,
-                    img: mess.author,
-                    date: mess.date
+                    img: "",
+                    date: mess.date,
+                    authorImage: Array.isArray(authorImage)
+                         ? authorImage?.[0]?.userImage
+                         : authorImage!,
+                    y: mess.positionY!
                };
           });
           setSearchValue(result);
      };
+
+     const handleScrollToMessage = (value: number) => {
+          setTimeout(() => {
+               if (container.current) {
+                    container.current.scrollTo({ top: value, behavior: "smooth" });
+               }
+          }, 110);
+     };
+
      return (
           <>
                <input
                     onChange={(event) => handleSearchMessages(event, targetChat)}
-                    placeholder="Начать поиск"
+                    placeholder={language === "RUSSIAN" ? "Начать поиск" : "Start a search"}
                     value={searchInput}
                     onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
                          event.target.style.width = "58.5vw";
@@ -53,18 +90,22 @@ const SearchInput: React.FC<typeInput> = ({ targetChat }) => {
                     onBlurCapture={() => setSearchInput("")}
                     className="headerChatBox__searchInput"
                ></input>
-               {searchInput.length > 1 ? (
+               {searchInput.length ? (
                     <div className="headerChatBox__searchPanel">
-                         {searchValue.length >= 1 ? (
+                         {searchValue?.length >= 1 ? (
                               searchValue.map((item: searchValue, index: number) => {
                                    return (
                                         <SearchPanelItem
                                              searchInput={searchInput}
                                              name={item.name}
+                                             key={index}
                                              value={item.value}
                                              img={item.img}
+                                             authorImage={item.authorImage}
                                              index={index}
                                              date={item.date}
+                                             y={item.y}
+                                             handleScroll={handleScrollToMessage}
                                         ></SearchPanelItem>
                                    );
                               })

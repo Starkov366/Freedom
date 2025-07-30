@@ -8,12 +8,14 @@ interface typeGallery {
      setGalleryIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
      userIsDarkTheme: boolean;
      userThemeColorScheme: { dark: string[]; light: string[] };
+     language: string;
 }
 const ChatGallery: React.FC<typeGallery> = ({
      images,
      setGalleryIsOpen,
      userIsDarkTheme,
-     userThemeColorScheme
+     userThemeColorScheme,
+     language
 }) => {
      const handleCreateGallery = (images: Map<string, string[]>): JSX.Element[] => {
           const list: JSX.Element[] = [];
@@ -59,7 +61,9 @@ const ChatGallery: React.FC<typeGallery> = ({
                          color="white"
                          className="chatBox__galleryBack"
                     ></FaArrowLeftLong>
-                    <span className="chatBox__galleryTitle">Gallery</span>
+                    <span className="chatBox__galleryTitle">
+                         {language === "RUSSIAN" ? "Галерея" : "Gallery"}
+                    </span>
                     <IoMdClose
                          onClick={() =>
                               setGalleryIsOpen((prevstate: boolean) => {

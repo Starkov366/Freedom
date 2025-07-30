@@ -6,10 +6,11 @@
      margin-left: auto;
      flex-direction: column;
      align-items: center;
+
      background: linear-gradient(90deg, #121959, #172179, #384194);
      animation: openMenus 0.12s linear normal;
      color: white;
-
+     user-select: none;
      font-weight: 600;
      &__profileSection {
           display: flex;
@@ -24,7 +25,7 @@
           margin-top: 20px;
           display: flex;
           flex-direction: column;
-          gap: 15px;
+          gap: 0.8vh;
           padding: 5px 5px 5px 5px;
           animation: itemMenus 1s ease normal;
      }
@@ -33,6 +34,8 @@
           height: 7vw;
           border-radius: 50%;
           margin-top: 12px;
+          object-fit: cover;
+          object-position: center;
      }
 
      &__profileName {
@@ -175,7 +178,25 @@
           margin-top: auto;
           margin-left: auto;
           margin-right: 20px;
-          padding: 0px 5px 5px 0px;
+          line-height: 10px;
+          padding: 0px 5px 25px 0px;
+          &Author {
+               margin-right: 10px;
+          }
+     }
+
+     &__contacts {
+          display: flex;
+          flex-direction: row;
+          border-radius: 5px;
+          align-items: center;
+          gap: 15px;
+          transition: background-color 0.5s ease-out;
+          padding: 2px 2px 2px 2px;
+     }
+     &__contacts:hover {
+          background-color: rgba(151, 151, 148, 0.699);
+          border-radius: 5px;
      }
 }
 @keyframes openMenus {

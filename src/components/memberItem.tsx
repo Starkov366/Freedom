@@ -9,10 +9,12 @@ import memo from "../../public/icons/user1 (1).png";
 import { UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
 import { roles } from "@/StateManagment/appSlice";
 import { TiDelete } from "react-icons/ti";
+import { UserInterface } from "@/StateManagment/appSlice";
+import { Chats, ChannelChat, GroupChat } from "../StateManagment/appSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/StateManagment/store";
 import { setDeleteContactFromChat } from "@/StateManagment/appSlice";
-
+import { useAddNewChatToPeopleByIdMutation } from "@/StateManagment/appApi";
 type typeMember = {
      image: string;
      name: string;
@@ -29,6 +31,7 @@ type typeMember = {
      role?: roles;
      isYouAdmin?: boolean;
      language: string;
+     targetChat?: Chats;
 };
 
 const MemberItem: React.FC<typeMember> = ({
@@ -46,14 +49,52 @@ const MemberItem: React.FC<typeMember> = ({
      contactID,
      role,
      isYouAdmin,
-     language
+     language,
+     targetChat
 }) => {
      const [isProfileOpen, setIsProfileOpen] = React.useState<boolean>(false);
      const userId: string = useSelector((state: RootState) => state.User.userId);
      const NewProfile = ProfileHOC({ WrappedComponent: Profile, edit: false });
      const dispatch: RootDispatch = useDispatch();
-     const handleAddContact = (chatID: string, contactID: string) => {
-          dispatch(setAddContactToGroup({ idChat: chatID, idContact: contactID }));
+     const [addUser] = useAddNewChatToPeopleByIdMutation();
+     const handleAddContact = async (chatID: string, contactID: string) => {
+          if (targetChat) {
+               const targetChatToDataBase: GroupChat | ChannelChat = {
+                    messages: Array.isArray(targetChat.messages) ? [...targetChat.messages] : [],
+                    joinUsers: [...(targetChat?.joinUsers as [])],
+                    chatId: targetChat.chatId,
+                    chatDateInitialization: targetChat.chatDateInitialization,
+                    imagesChat: targetChat.imagesChat,
+                    info: {
+                         ...targetChat.info
+                    },
+                    type: targetChat.type === "GROUP" ? "GROUP" : "CHANNEL",
+                    pinnedMessage: targetChat.pinnedMessage,
+                    chatOperation: targetChat.chatOperation
+               };
+               dispatch(setAddContactToGroup({ idChat: chatID, idContact: contactID }));
+               const respons = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
+                    {
+                         headers: { "Content-Type": "application/json" },
+                         method: "GET"
+                    }
+               );
+               let userKey: string = "";
+               const parseResponse = await respons.json();
+               for (const [key, value] of Object.entries(parseResponse) as [
+                    string,
+                    UserInterface
+               ][]) {
+                    if (value.userId === contactID) {
+                         userKey = key;
+                         break;
+                    }
+               }
+               await addUser({ chat: targetChatToDataBase, userId: userKey });
+          } else {
+               console.log(targetChat, "ЧААААААААААААААААААААААИ");
+          }
      };
      const handleDeleteContact = (chatID: string, contactID: string) => {
           dispatch(setDeleteContactFromChat({ idChat: chatID, idContact: contactID }));

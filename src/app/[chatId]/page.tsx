@@ -13,11 +13,18 @@ import ChatBox from "@/components/chat";
 import { Provider } from "react-redux";
 import store from "../../StateManagment/store";
 import { useSelector } from "react-redux";
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import { RootState } from "../../StateManagment/store";
 export default function Main() {
+     const client = new ApolloClient({
+          uri: "http://localhost:4000/",
+          cache: new InMemoryCache()
+     });
      return (
           <Provider store={store}>
-               <ChatBox language={"RUSSIAN"} fullfield={true}></ChatBox>
+               <ApolloProvider client={client}>
+                    <ChatBox language={"RUSSIAN"} fullfield={true}></ChatBox>
+               </ApolloProvider>
           </Provider>
      );
 }

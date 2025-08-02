@@ -126,87 +126,6 @@ const CreateNewWindow = ({
                          })
                     );
                }
-               const newChannel: ChannelChat = {
-                    messages: [],
-                    joinUsers: [
-                         {
-                              userDateRegistred: state.userDateRegistred,
-                              userDescription: state.userDescription,
-                              userFriends: state.userFriends,
-                              userId: state.userId,
-                              userEmail: state.userEmail,
-                              userGroups: state.userGroups,
-                              userImage: state.userImage,
-                              userInstagramInfo: state.userInstagramInfo,
-
-                              userIsOnline: state.userIsOnline,
-                              userName: state.userName,
-                              userPassword: state.userPassword,
-                              userTelegramInfo: state.userTelegramInfo,
-                              userRole: roles.admin
-                         }
-                    ],
-                    chatId: id,
-                    chatDateInitialization: new Date().toString(),
-                    imagesChat: img ? img : "",
-                    info: {
-                         chatDescription: description,
-                         chatImage: img ? img : "",
-                         chatName: name,
-                         lastMessageDate: "",
-                         lastUserName: "",
-                         lastSendImg: img ? img : "",
-                         title: name,
-                         flagCheck: false,
-                         value: "",
-                         messageImage: ""
-                    },
-                    type: "CHANNEL",
-                    pinnedMessage: [],
-                    chatOperation: 0
-               };
-               await addChat(newChannel);
-               const users = await fetch(
-                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
-                    {
-                         method: "GET",
-                         headers: {
-                              "Content-Type": "application/json"
-                         }
-                    }
-               );
-               const readyUsers = await users.json();
-               for (const [key, val] of Object.entries(readyUsers)) {
-                    const value = val as UserInterface;
-                    if (value.userName === state.userName) {
-                         keyAndName["key"] = key;
-                         keyAndName["value"] = newChannel;
-                         break;
-                    }
-               }
-               keyAndName.value
-                    ? await addChatToPeople({ chat: keyAndName.value, userId: keyAndName.key })
-                    : null;
-          } else {
-               if (img) {
-                    dispatch(
-                         setCreateNewChannel({
-                              img: img,
-                              name: name,
-                              description: description,
-                              id: id
-                         })
-                    );
-               } else {
-                    dispatch(
-                         setCreateNewChannel({
-                              img: "",
-                              name: name,
-                              description: description,
-                              id: id
-                         })
-                    );
-               }
                const newGroup: GroupChat = {
                     messages: [],
                     joinUsers: [
@@ -262,6 +181,88 @@ const CreateNewWindow = ({
                     if (value.userName === state.userName) {
                          keyAndName["key"] = key;
                          keyAndName["value"] = newGroup;
+                         break;
+                    }
+               }
+               keyAndName.value
+                    ? await addChatToPeople({ chat: keyAndName.value, userId: keyAndName.key })
+                    : null;
+          } else {
+               if (img) {
+                    dispatch(
+                         setCreateNewChannel({
+                              img: img,
+                              name: name,
+                              description: description,
+                              id: id
+                         })
+                    );
+               } else {
+                    dispatch(
+                         setCreateNewChannel({
+                              img: "",
+                              name: name,
+                              description: description,
+                              id: id
+                         })
+                    );
+               }
+               const newChannel: ChannelChat = {
+                    messages: [],
+                    joinUsers: [
+                         {
+                              userDateRegistred: state.userDateRegistred,
+                              userDescription: state.userDescription,
+                              userFriends: state.userFriends,
+                              userId: state.userId,
+                              userEmail: state.userEmail,
+                              userGroups: state.userGroups,
+                              userImage: state.userImage,
+                              userInstagramInfo: state.userInstagramInfo,
+
+                              userIsOnline: state.userIsOnline,
+                              userName: state.userName,
+                              userPassword: state.userPassword,
+                              userTelegramInfo: state.userTelegramInfo,
+                              userRole: roles.admin
+                         }
+                    ],
+                    chatId: id,
+                    chatDateInitialization: new Date().toString(),
+                    imagesChat: img ? img : "",
+                    info: {
+                         chatDescription: description,
+                         chatImage: img ? img : "",
+                         chatName: name,
+                         lastMessageDate: "",
+                         lastUserName: "",
+                         lastSendImg: img ? img : "",
+                         title: name,
+                         flagCheck: false,
+                         value: "",
+                         messageImage: ""
+                    },
+                    type: "CHANNEL",
+                    pinnedMessage: [],
+                    chatOperation: 0
+               };
+
+               await addChat(newChannel);
+               const users = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
+                    {
+                         method: "GET",
+                         headers: {
+                              "Content-Type": "application/json"
+                         }
+                    }
+               );
+               const readyUsers = await users.json();
+               for (const [key, val] of Object.entries(readyUsers)) {
+                    const value = val as UserInterface;
+                    if (value.userName === state.userName) {
+                         keyAndName["key"] = key;
+                         keyAndName["value"] = newChannel;
                          break;
                     }
                }

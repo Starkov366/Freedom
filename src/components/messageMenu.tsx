@@ -29,6 +29,7 @@ const MessageMenu = ({
                setChats(mess);
           }
      }, [mess]);
+     const [isUpdate, setIsUpdate] = React.useState<boolean>(true);
      return (
           <div
                style={{
@@ -47,6 +48,8 @@ const MessageMenu = ({
                     value={value}
                     setValue={setValue}
                     language={language}
+                    isUpdate={isUpdate}
+                    setIsUpdate={setIsUpdate}
                ></HeaderMessageMenu>
                <div className="messageMenu__inner">
                     {value.length > 0 ? (

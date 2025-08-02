@@ -1,8 +1,9 @@
-import type { UserInterface, UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
+import type { DuoChat, UserInterface, UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
 import { error } from "console";
 import { valueFromAST } from "graphql";
 import { GraphQLScalarType } from "graphql";
 import GraphQLJSON from "graphql-type-json";
+import type { Chats } from "@/StateManagment/appSlice";
 const URL: string = "https://telegrambotfishcombat-default-rtdb.firebaseio.com/";
 const resolvers = {
      JSON: GraphQLJSON,
@@ -19,6 +20,97 @@ const resolvers = {
                     return args.user;
                } else {
                     throw new Error("error");
+               }
+          },
+          addContactToUser: async (
+               _: any,
+               args: {
+                    contact: UserInterfaceForJoinUsers;
+                    contactId: string;
+                    userId: string;
+                    myContact: UserInterfaceForJoinUsers;
+               }
+          ) => {
+               try {
+                    const keys: [string, string] = ["", ""];
+                    const response = await fetch(URL + "freedomUsers.json", {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "GET"
+                    });
+                    const users = await response.json();
+
+                    for (const [key, value] of Object.entries(users)) {
+                         const typedValue: UserInterface = value as UserInterface;
+                         if (typedValue.userId === args.contactId) {
+                              keys[0] = key;
+                         } else if (typedValue.userId === args.userId) {
+                              keys[1] = key;
+                         }
+                    }
+                    console.log(keys, "КЛЮЧИИИИ", args.myContact);
+                    await fetch(URL + `freedomUsers/${keys[0]}/userContacts.json`, {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "POST",
+                         body: JSON.stringify(args.myContact)
+                    });
+                    await fetch(URL + `freedomUsers/${keys[1]}/userContacts.json`, {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "POST",
+                         body: JSON.stringify(args.contact)
+                    });
+
+                    return "SUCESS";
+               } catch (error) {
+                    console.error(error);
+               }
+          },
+          sendNewDuoChatToUsers: async (
+               _: any,
+               args: { chat: DuoChat; contactId: string; userId: string }
+          ) => {
+               try {
+                    const keys: [string, string] = ["", ""];
+                    const response = await fetch(URL + "freedomUsers.json", {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "GET"
+                    });
+                    const users = await response.json();
+
+                    for (const [key, value] of Object.entries(users)) {
+                         const typedValue: UserInterface = value as UserInterface;
+                         if (typedValue.userId === args.contactId) {
+                              keys[0] = key;
+                         } else if (typedValue.userId === args.userId) {
+                              keys[1] = key;
+                         }
+                    }
+                    console.log(keys, "КЛЮЧИИИИ", args.chat);
+                    await fetch(URL + `freedomUsers/${keys[0]}/userChats.json`, {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "POST",
+                         body: JSON.stringify(args.chat)
+                    });
+                    await fetch(URL + `freedomUsers/${keys[1]}/userChats.json`, {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "POST",
+                         body: JSON.stringify(args.chat)
+                    });
+
+                    return "SUCESS";
+               } catch (error) {
+                    console.error(error);
                }
           }
      },
@@ -93,12 +185,46 @@ const resolvers = {
                     method: "GET"
                });
                const users = await allUsers.json();
-               const parsedUsers: any[] = [];
-               for (const val of Object.values(users)) {
-                    const value: UserInterfaceForJoinUsers = val as any;
-                    parsedUsers.push(value);
-               }
-               return parsedUsers;
+               const cleanedUsers: UserInterfaceForJoinUsers[] = Object.values(users).map(
+                    (user: any) => ({
+                         userDateRegistred: user.userDateRegistred,
+                         userDescription: user.userDescription,
+                         userEmail: user.userEmail,
+                         userFriends: user.userFriends,
+                         userGroups: user.userGroups,
+                         userId: user.userId,
+                         userImage: user.userImage,
+                         userInstagramInfo: user.userInstagramInfo,
+                         userIsOnline: user.userIsOnline,
+                         userName: user.userName,
+                         userPassword: user.userPassword,
+                         userTelegramInfo: user.userTelegramInfo
+                    })
+               );
+
+               return cleanedUsers;
+          },
+          getAllChats: async (_: any, __: any) => {
+               const allUsers = await fetch(URL + "freedomChats.json", {
+                    headers: {
+                         "Content-Type": "application/json"
+                    },
+                    method: "GET"
+               });
+               const users = await allUsers.json();
+               const cleanedChats: Chats[] = Object.values(users).map((chat: any) => ({
+                    chatDateInitialization: chat.chatDateInitialization,
+                    chatId: chat.chatId,
+                    chatOperation: chat.chatOperation,
+                    messages: chat.messages,
+                    pinnedMessage: chat.pinnedMessage,
+                    type: chat.type,
+                    joinUsers: chat.joinUsers,
+                    imagesChat: chat.imagesChat,
+                    info: chat.info
+               }));
+
+               return cleanedChats;
           }
      }
 };

@@ -392,7 +392,7 @@ const AutorizationPage = () => {
                               userTelegramInfo: "",
                               userInstagramInfo: "",
                               userIsOnline: users.userIsOnline,
-                              userChats: data.getUserById.userChats,
+                              userChats: [...data.getUserById.userChats],
                               userFriends: [],
                               userImage: res.data.getUserById.userImage,
                               userContacts: [],

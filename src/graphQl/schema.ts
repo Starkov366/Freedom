@@ -93,10 +93,11 @@ const typeDefs = gql`
           pinnedMessage: [String]
           chatOperation: Int
      }
+
      type ChannelChat {
           messages: [TypeBoxMessageItem]
           joinUsers: [UserInterfaceForJoinUsers]
-          chatId: ID
+          chatId: String
           chatDateInitialization: String
           imagesChat: String
           info: ChatInfo
@@ -153,13 +154,77 @@ const typeDefs = gql`
      }
      type Mutation {
           addUser(user: UserInterfaceInput): UserInterface
+          addContactToUser(
+               contact: UserInterfaceForJoinUsersInput
+               contactId: String
+               userId: String
+               myContact: UserInterfaceForJoinUsersInput
+          ): String
+          sendNewDuoChatToUsers(chat: DuoChatInput, contactId: String, userId: String): String
      }
      type Query {
           getUserById(userId: String): UserInterface
           getAllUsers: [UserInterface]
+          getAllChats: JSON
+     }
+     input ChatInfoInput {
+          chatImage: String
+          chatName: String
+          chatDescription: String
+          lastSendImg: String
+          title: String
+          lastUserName: String
+          value: String
+          lastMessageDate: String
+          flagCheck: Boolean
+          messageImage: String
+     }
+     input ReplyInput {
+          name: String
+          value: String
+          y: Int
+     }
+     input UserLikesInput {
+          userId: String
+     }
+     input DuoUsersInput {
+          one: UserInterfaceForJoinUsersInput
+          two: UserInterfaceForJoinUsersInput
+     }
+     input TypeBoxMessageItemInput {
+          value: String
+          date: String
+          author: String
+          checkFlag: Boolean
+          isLike: Boolean
+          countView: Int
+          image: [String]
+          id: ID
+          targetChatId: ID
+          isVisible: Boolean
+          targetChat: DuoChatInput
+          inputValue: String
+          isEdit: Boolean
+          type: ChatTypes
+          usersLikes: [UserLikesInput]
+          language: Language
+          reply: ReplyInput
+          positionY: Int
+     }
+     input DuoChatInput {
+          messages: [TypeBoxMessageItemInput]
+          joinUsers: DuoUsersInput
+          chatId: String
+          chatDateInitialization: String
+          imagesChat: String
+          info: ChatInfoInput
+          type: ChatTypes
+          pinnedMessage: [String]
+          chatOperation: Int
      }
      input UserInterfaceForJoinUsersInput {
           userId: ID
+          userChatID: String
           userName: String
           userEmail: String
           userPassword: String

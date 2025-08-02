@@ -155,11 +155,13 @@ const BigChatInfo: React.FC<typeBigChat> = ({
                                                             userIsDarkTheme={userIsDarkTheme}
                                                             userThemeColorScheme={
                                                                  userThemeColorScheme
+                                                            
                                                             }
                                                             isYouAdmin={checkYourRole()}
                                                             name={member.userName}
                                                             image={member.userImage}
                                                             flag={member.userIsOnline}
+                                                            
                                                             member={member}
                                                             targetChatID={targetChatID}
                                                             contactID={member.userId}
@@ -180,6 +182,7 @@ const BigChatInfo: React.FC<typeBigChat> = ({
                               setIsOpen={setContactMenuIsOpen}
                               userIsDarkTheme={userIsDarkTheme}
                               userThemeColorScheme={userThemeColorScheme}
+                              targetChat={targetChat}
                               language={language}
                          ></ContactMenu>
                     </div>

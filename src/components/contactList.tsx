@@ -16,6 +16,7 @@ type typeContactMenu = {
      isList: boolean;
      targetChatID: string;
      language: string;
+     targetChat: Chats;
 };
 const ContactMenu: React.FC<typeContactMenu> = ({
      userIsDarkTheme,
@@ -23,15 +24,16 @@ const ContactMenu: React.FC<typeContactMenu> = ({
      setIsOpen,
      isList,
      targetChatID,
-     language
+     language,
+     targetChat
 }) => {
      const contactsRedux: UserInterfaceForJoinUsers[] = useSelector(
           (state: RootState) => state.User.userContacts
      );
      const [contacts, setContacts] = React.useState<UserInterfaceForJoinUsers[]>(contactsRedux);
      const chats: Chats[] = useSelector((state: RootState) => state.User.userChats);
-     const targetChat: Chats[] = chats.filter((chats: Chats) => chats.chatId === targetChatID);
-     const targetChatObj: Chats = targetChat[0];
+     const targetChatLocal: Chats[] = chats.filter((chats: Chats) => chats.chatId === targetChatID);
+     const targetChatObj: Chats = targetChatLocal[0];
      React.useEffect(() => {
           if (targetChatObj?.joinUsers && targetChatObj.type !== "DUO" && contacts) {
                const groupContacts: UserInterfaceForJoinUsers[] = contacts.filter(
@@ -79,6 +81,7 @@ const ContactMenu: React.FC<typeContactMenu> = ({
                                                name={contact.userName}
                                                image={contact.userImage}
                                                flag={contact.userIsOnline}
+                                               targetChat={targetChat}
                                                language={language}
                                           ></MemberItem>
                                      </Link>
@@ -94,6 +97,7 @@ const ContactMenu: React.FC<typeContactMenu> = ({
                                         member={contact}
                                         isList={isList}
                                         name={contact.userName}
+                                        targetChat={targetChat}
                                         image={contact.userImage}
                                         key={index}
                                         flag={contact.userIsOnline}

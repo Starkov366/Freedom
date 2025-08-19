@@ -9,6 +9,8 @@ import { RootDispatch } from "@/StateManagment/store";
 import { Chats, setClearChatHistory, setDeleteChat } from "@/StateManagment/appSlice";
 import { useRouter } from "next/navigation";
 import ChatGallery from "./chatGallery";
+import { UserInterface } from "@/StateManagment/appSlice";
+import { useDeleteChatFromUserMutation } from "@/StateManagment/appApi";
 import { typeBoxMessageItem } from "./chatBoxMessageItem";
 const HeaderMessageMenu = ({
      targetChat,
@@ -32,42 +34,81 @@ const HeaderMessageMenu = ({
                return newFlag;
           });
      };
-
-     const handlePushAndSortImages = (chat: Chats): Map<string, string[]> => {
-          const images = chat?.messages
-               .filter((message: typeBoxMessageItem) => {
-                    return message.date;
-               })
-               .map((message: typeBoxMessageItem) => {
-                    return { date: message.date, src: message.image };
-               });
-
-          const monthsImage: Map<string, string[]> = new Map();
-          images?.forEach((item) => {
-               const month: string = item?.date.slice(4, 7)!;
-               const Src = item.src;
-               if (!Array.isArray(Src)) {
-                    if (!monthsImage.has(month)) {
-                         monthsImage.set(month, []);
-                    }
-                    Src?.length! > 1 || typeof Src === undefined
-                         ? monthsImage.get(month)!.push(Src as string)
-                         : null;
-               } else if (Array.isArray(Src)) {
-                    if (!monthsImage.has(month)) {
-                         monthsImage.set(month, []);
-                    }
-                    Src.forEach((item: string) => {
-                         typeof Src !== undefined ? monthsImage.get(month)!.push(item) : null;
+     const [deleteChat] = useDeleteChatFromUserMutation();
+     const handlePushAndSortImages = (chat: Chats): Map<string, string[]> | null => {
+          if (Array.isArray(chat?.messages)) {
+               const images = chat?.messages
+                    ?.filter((message: typeBoxMessageItem) => {
+                         return message.date;
+                    })
+                    .map((message: typeBoxMessageItem) => {
+                         return { date: message.date, src: message.image };
                     });
+
+               const monthsImage: Map<string, string[]> = new Map();
+               images?.forEach((item) => {
+                    const month: string = item?.date.slice(4, 7)!;
+                    const Src = item.src;
+                    if (!Array.isArray(Src)) {
+                         if (!monthsImage.has(month)) {
+                              monthsImage.set(month, []);
+                         }
+                         Src?.length! > 1 || typeof Src === undefined
+                              ? monthsImage.get(month)!.push(Src as string)
+                              : null;
+                    } else if (Array.isArray(Src)) {
+                         if (!monthsImage.has(month)) {
+                              monthsImage.set(month, []);
+                         }
+                         Src.forEach((item: string) => {
+                              typeof Src !== undefined ? monthsImage.get(month)!.push(item) : null;
+                         });
+                    }
+               });
+               return monthsImage;
+          } else {
+               return null;
+          }
+     };
+     const handleDeleteChat = async () => {
+          const responseUsers = await fetch(
+               "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
+               {
+                    headers: { "Content-Type": "application/json" },
+                    method: "GET"
                }
-          });
-          return monthsImage;
+          );
+          const parseResponseUsers = await responseUsers.json();
+          const keys = {
+               user: "",
+               chat: ""
+          };
+          for (const [key, user] of Object.entries(parseResponseUsers) as [
+               string,
+               UserInterface
+          ][]) {
+               if (user.userId === user.userId) {
+                    keys["user"] = key;
+
+                    for (const [keyChat, chat] of Object.entries(user.userChats) as [
+                         string,
+                         Chats
+                    ][]) {
+                         if (chat.chatId === targetChat.chatId) {
+                              keys["chat"] = keyChat;
+                              break;
+                         }
+                    }
+               }
+          }
+          console.log(keys, "WWW");
+          dispatch(setDeleteChat({ ID: id })), router.back();
+          await deleteChat({ userId: keys.user, chatId: keys.chat });
      };
      const router = useRouter();
      const [galleryIsOpen, setGalleryIsOpen] = React.useState<boolean>(false);
      const dispatch: RootDispatch = useDispatch();
-     const images: Map<string, string[]> = handlePushAndSortImages(targetChat);
+     const images: Map<string, string[]> | null = handlePushAndSortImages(targetChat);
      return (
           <div
                style={{
@@ -111,7 +152,7 @@ const HeaderMessageMenu = ({
                </div>
                <div
                     onClick={() => {
-                         dispatch(setDeleteChat({ ID: id })), router.back();
+                         handleDeleteChat();
                     }}
                     className="headerChatBox__toolbarMenuDelete"
                >
@@ -125,7 +166,7 @@ const HeaderMessageMenu = ({
                          userIsDarkTheme={userIsDarkTheme}
                          userThemeColorScheme={userThemeColorScheme}
                          setGalleryIsOpen={setGalleryIsOpen}
-                         images={images}
+                         images={images!}
                          language={language}
                     ></ChatGallery>
                ) : null}

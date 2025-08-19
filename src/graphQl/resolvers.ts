@@ -112,6 +112,123 @@ const resolvers = {
                } catch (error) {
                     console.error(error);
                }
+          },
+          updateChatDB: async (_: any, args: { targetChat: Chats }) => {
+               let chatKey: string = "";
+               const chats = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
+                    {
+                         method: "GET",
+                         headers: {
+                              "Content-Type": "application/json"
+                         }
+                    }
+               );
+               const readyChats = await chats.json();
+               for (const [key, val] of Object.entries(readyChats)) {
+                    const value = val as Chats;
+                    if (value.chatId === args.targetChat.chatId) {
+                         chatKey = key;
+                         await fetch(
+                              `https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats/${chatKey}.json`,
+                              {
+                                   method: "PUT",
+                                   headers: {
+                                        "Content-Type": "application/json"
+                                   },
+                                   body: JSON.stringify(args.targetChat)
+                              }
+                         );
+                         break;
+                    }
+               }
+               return "SUCCES";
+          },
+          updateDuoChat: async (
+               _: any,
+               args: { ownUserId: string; myId: string; newChat: DuoChat }
+          ) => {
+               const keys = {
+                    myKey: "",
+                    ownUserKey: "",
+                    myChatKey: "",
+                    ownChatKey: ""
+               };
+               try {
+                    const response = await fetch(URL + "freedomUsers.json", {
+                         headers: {
+                              "Content-Type": "application/json"
+                         },
+                         method: "GET"
+                    });
+                    const users = await response.json();
+                    for (const [key, value] of Object.entries(users) as [string, UserInterface][]) {
+                         if (value.userId === args.myId) {
+                              keys.myKey = key;
+                         } else if (value.userId === args.ownUserId) {
+                              keys.ownUserKey = key;
+                         }
+                    }
+
+                    const responseMyChat = await fetch(
+                         URL + `freedomUsers/${keys.myKey}/userChats.json`,
+                         {
+                              headers: {
+                                   "Content-Type": "application/json"
+                              },
+                              method: "GET"
+                         }
+                    );
+                    const myChats = await responseMyChat.json();
+                    for (const [key, value] of Object.entries(myChats) as [string, Chats][]) {
+                         if (value.chatId === args.newChat.chatId) {
+                              keys.myChatKey = key;
+                         }
+                    }
+
+                    const responseOwnChat = await fetch(
+                         URL + `freedomUsers/${keys.ownUserKey}/userChats.json`,
+                         {
+                              headers: {
+                                   "Content-Type": "application/json"
+                              },
+                              method: "GET"
+                         }
+                    );
+                    const ownChats = await responseOwnChat.json();
+                    for (const [key, value] of Object.entries(ownChats) as [string, Chats][]) {
+                         if (value.chatId === args.newChat.chatId) {
+                              keys.ownChatKey = key;
+                         }
+                    }
+
+                    await fetch(
+                         URL + `freedomUsers/${keys.myKey}/userChats/${keys.myChatKey}.json`,
+                         {
+                              headers: {
+                                   "Content-Type": "application/json"
+                              },
+                              method: "PUT",
+                              body: JSON.stringify(args.newChat)
+                         }
+                    );
+
+                    await fetch(
+                         URL + `freedomUsers/${keys.ownUserKey}/userChats/${keys.ownChatKey}.json`,
+                         {
+                              headers: {
+                                   "Content-Type": "application/json"
+                              },
+                              method: "PUT",
+                              body: JSON.stringify(args.newChat)
+                         }
+                    );
+
+                    console.log("КЛЮЧИ: ", keys);
+               } catch (error: any) {
+                    console.error(error);
+               }
+               return keys;
           }
      },
      Query: {
@@ -225,6 +342,61 @@ const resolvers = {
                }));
 
                return cleanedChats;
+          },
+          getUpdateMessageMenu: async (_: any, args: { userId: string; userChats: Chats[] }) => {
+               let userKey: string = "";
+               const res = await fetch(URL + "freedomUsers.json", {
+                    headers: { "Content-Type": "application/json" },
+                    method: "GET"
+               });
+               const ready = await res.json();
+               for (const [key, value] of Object.entries(ready) as [string, UserInterface][]) {
+                    if (value.userId === args.userId) {
+                         userKey = key;
+                         break;
+                    }
+               }
+               const newUserChats: Chats[] = [];
+
+               for (const chat of args.userChats) {
+                    if (chat.type === "DUO") {
+                         const res = await fetch(`${URL}freedomUsers/${userKey}/userChats.json`, {
+                              headers: { "Content-Type": "application/json" },
+                              method: "GET"
+                         });
+
+                         const userChats = await res.json();
+
+                         let targetChat = chat;
+                         for (const [_, value] of Object.entries(userChats) as [string, Chats][]) {
+                              if (value.chatId === chat.chatId) {
+                                   targetChat = value as DuoChat;
+                                   break;
+                              }
+                         }
+
+                         newUserChats.push(targetChat);
+                    } else if (chat.type === "CHANNEL" || chat.type === "GROUP") {
+                         let targetChat: Chats = chat;
+                         const res = await fetch(`${URL}freedomChats.json`, {
+                              headers: { "Content-Type": "application/json" },
+                              method: "GET"
+                         });
+
+                         const userChats = await res.json();
+
+                         for (const [_, value] of Object.entries(userChats) as [string, Chats][]) {
+                              if (value.chatId === chat.chatId) {
+                                   targetChat = value as Chats;
+                                   break;
+                              }
+                         }
+                         newUserChats.push(targetChat);
+                    } else if (chat.type === "SAVED") {
+                         newUserChats.push(chat);
+                    }
+               }
+               return newUserChats;
           }
      }
 };

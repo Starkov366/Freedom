@@ -2,9 +2,9 @@ import React, { CSSProperties, forwardRef, JSX } from "react";
 import { RootState } from "@/StateManagment/store";
 import { useSelector, useDispatch } from "react-redux";
 import { RootDispatch } from "@/StateManagment/store";
+import { GrYoutube } from "react-icons/gr";
 import checked from "../../public/icons/double-tick_8206388.png";
 import doubleChecked from "../../public/icons/tick_17342241.png";
-
 import { IoEye } from "react-icons/io5";
 import {
      Chats,
@@ -48,6 +48,10 @@ export type typeBoxMessageItem = {
      reply?: { name: string; value: string; y: number } | null;
      positionY?: number;
      handleScroll?: (value: number) => void;
+     isYouTubeVideo?: string;
+     setIsYouTubeVideo?: React.Dispatch<React.SetStateAction<string>>;
+     isOpenYouTubeVideo?: boolean;
+     setIsOpenYouTubeVideo?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>(
@@ -76,7 +80,11 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                setReplyMessage,
                reply,
                positionY,
-               handleScroll
+               handleScroll,
+               isYouTubeVideo,
+               setIsYouTubeVideo,
+               isOpenYouTubeVideo,
+               setIsOpenYouTubeVideo
           },
           ref: React.ForwardedRef<HTMLDivElement> | null
      ) => {
@@ -163,7 +171,7 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                          clearTimeout(timeOpacity0);
                };
           }, [isVisibleContext]);
-          const [isYouTubeVideo, setIsYouTubeVideo] = React.useState<string>("");
+
           console.log(flag, "AAAAXXAXAXAXA");
           const handleIsLink = (value: string): JSX.Element[] => {
                const wordArray: string[] = value.split(" ");
@@ -175,7 +183,7 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                                    {word + " "}
                               </a>
                          ) : (
-                              <span></span>
+                              <span key={index}></span>
                          )
                     ) : (
                          <span key={index}>{word + " "}</span>
@@ -192,7 +200,8 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                style: style,
                countView: countView,
                image: image,
-
+               isYouTubeVideo: isYouTubeVideo,
+               setIsYouTubeVideo: setIsYouTubeVideo,
                id: id,
                targetChatId: targetChatId,
                isVisible: isVisible,
@@ -206,6 +215,7 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                usersLikes: usersLikes
           };
           const width: number = Number(document.querySelector(".chatBox__item")?.clientWidth);
+
           React.useEffect(() => {
                const el = (ref as React.RefObject<HTMLDivElement>)?.current;
                if (el && targetChatId && positionY === undefined) {
@@ -223,7 +233,6 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                          //https://www.youtube.com/watch?v=0trmyT3O2B0
                          const srcForPlayer: string =
                               word.slice(0, 24) + "embed/" + word.slice(32, word.length);
-                         setIsYouTubeVideo(srcForPlayer);
                     }
                });
           }, []);
@@ -307,7 +316,7 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
 
                     <div
                          style={{
-                              marginLeft: `${user.userName === author ? "73.5%" : "0px"}  `
+                              marginLeft: `${user.userName === author ? "63%" : "0px"}  `
                          }}
                          className="chatBox__itemImageArray"
                     >
@@ -350,26 +359,33 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                               userIsDarkTheme={userIsDarkTheme}
                               userThemeColorScheme={userThemeColorScheme}
                               positionY={positionY!}
+                              userName={user.userName}
                          ></ContextMenu>
                     ) : null}
-                    {isYouTubeVideo.length >= 1 ? (
+
+                    {value
+                         .split(" ")
+                         .some((word: string) => word.includes("https://www.youtube.com")) && (
                          <div
                               style={{
-                                   marginLeft: `${user.userName === author ? "52.5%" : "0px"}  `
+                                   marginLeft: `${user.userName === author ? "72.5%" : "0px"}`
                               }}
                               className="chatBox__itemYouTube"
+                              onClick={() => {
+                                   setIsOpenYouTubeVideo!((prev) => !prev);
+                                   value.split(" ").forEach((word: string) => {
+                                        if (word.includes("https://www.youtube.com")) {
+                                             const srcForPlayer =
+                                                  word.slice(0, 24) + "embed/" + word.slice(32);
+
+                                             setIsYouTubeVideo!(srcForPlayer);
+                                        }
+                                   });
+                              }}
                          >
-                              <iframe
-                                   width="560"
-                                   height="315"
-                                   src={isYouTubeVideo}
-                                   title="YouTube video player"
-                                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                   referrerPolicy="strict-origin-when-cross-origin"
-                                   allowFullScreen
-                              ></iframe>
+                              <GrYoutube size={70} color="red"></GrYoutube>
                          </div>
-                    ) : null}
+                    )}
                </>
           );
      }

@@ -7,7 +7,6 @@ import { RootState } from "@/StateManagment/store";
 import { MdOutlineModeEdit } from "react-icons/md";
 import { RiUserAddLine } from "react-icons/ri";
 import MemberItem from "./memberItem";
-import mock from "../../public/icons/background.png";
 import { Chats, UserInterfaceForJoinUsers, roles } from "@/StateManagment/appSlice";
 import ContactMenu from "./contactList";
 import undefinedIconDuo from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
@@ -155,13 +154,11 @@ const BigChatInfo: React.FC<typeBigChat> = ({
                                                             userIsDarkTheme={userIsDarkTheme}
                                                             userThemeColorScheme={
                                                                  userThemeColorScheme
-                                                            
                                                             }
                                                             isYouAdmin={checkYourRole()}
                                                             name={member.userName}
                                                             image={member.userImage}
                                                             flag={member.userIsOnline}
-                                                            
                                                             member={member}
                                                             targetChatID={targetChatID}
                                                             contactID={member.userId}

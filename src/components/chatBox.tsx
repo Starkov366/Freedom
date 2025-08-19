@@ -11,12 +11,10 @@ type typeChatBox = {
 };
 import InsertYVideo from "./insertYVideo";
 import { ChatBoxMessageItem } from "./chatBoxMessageItem";
-import { LuSmilePlus } from "react-icons/lu";
 import { typeBoxMessageItem } from "./chatBoxMessageItem";
 import { ImagePresentation } from "./imagePresentation";
 import { UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
 import { roles } from "@/StateManagment/appSlice";
-import BigChatInfo from "./bigChatInfo";
 import ItemHOC from "./itemHOC";
 import { setDataByChatId, setHeaderChatById, setEditMessageById } from "@/StateManagment/appSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +22,7 @@ import StickerMenu from "./stickersMenu";
 import { Chats } from "@/StateManagment/appSlice";
 import ReplyBottomPanel from "./replyBottomPanel";
 import type { RootDispatch, RootState } from "@/StateManagment/store";
-
+import YouTubeVideo from "./youtubeVideo";
 const ChatBox: React.FC<typeChatBox> = ({
      fullfield,
      targetChat,
@@ -38,16 +36,32 @@ const ChatBox: React.FC<typeChatBox> = ({
      const user = useSelector((store: RootState) => store.User);
      const inputRef = useRef<HTMLInputElement | null>(null);
      const [chatImg, setChatImg] = React.useState<any[]>([]);
-     const handleOpenFS = (event: React.ChangeEvent<HTMLInputElement>) => {
+     const [isYouTubeVideo, setIsYouTubeVideo] = React.useState<string>("");
+     const [isOpenYouTubeVideo, setIsOpenYouTubeVideo] = React.useState<boolean>(false);
+     const handleOpenFS = async (event: React.ChangeEvent<HTMLInputElement>) => {
           const img = event.currentTarget.files?.[0];
           const src = URL.createObjectURL(img!);
-          setChatImg((prev: any) => [...prev, src]);
+          const formData = new FormData();
+          formData.append("image", img!);
+          const res = await fetch(
+               `https://api.imgbb.com/1/upload?key=2322e95855d517dcba7efc53b86e7f6b`,
+               {
+                    method: "POST",
+                    body: formData
+               }
+          );
+          const ready = await res.json();
+          const link = ready.data.url as string;
+          setChatImg((prev: any) => [...prev, link]);
      };
-     const [replyMessage, setReplyMessage] = React.useState<{
-          name: string;
-          value: string;
-          y: number;
-     }>();
+     const [replyMessage, setReplyMessage] = React.useState<
+          | {
+                 name: string;
+                 value: string;
+                 y: number;
+            }
+          | undefined
+     >(undefined);
 
      const checkYourRole = (): boolean => {
           if (Array.isArray(targetChat?.joinUsers) && targetChat.joinUsers !== undefined) {
@@ -132,7 +146,7 @@ const ChatBox: React.FC<typeChatBox> = ({
                                 messageImage: chatImg.length >= 1 ? "[IMAGE]" : ""
                            })
                       ),
-                      setReplyMessage({ name: "", value: "", y: 0 }))
+                      setReplyMessage(undefined))
                     : null;
           } else if (typeEvent === "edit") {
                if (!textArea || !textArea.current) {
@@ -201,6 +215,7 @@ const ChatBox: React.FC<typeChatBox> = ({
           if (container.current) {
                container.current.scrollTop = container.current.scrollHeight - 100;
           }
+          console.log("Сообщения изменены..");
      }, [chatMessages]);
 
      const syncDirection = useRef<"none" | "reduxToLocal" | "localToRedux">("none");
@@ -275,8 +290,8 @@ const ChatBox: React.FC<typeChatBox> = ({
                                         id={item?.id}
                                         isEdit={item.isEdit}
                                         inputValue={inputValue}
-                                        targetChatId={targetChat.chatId}
-                                        type={targetChat.type}
+                                        targetChatId={targetChat?.chatId}
+                                        type={targetChat?.type}
                                         usersLikes={item.usersLikes}
                                         countView={item.countView}
                                         language={language}
@@ -284,6 +299,10 @@ const ChatBox: React.FC<typeChatBox> = ({
                                         reply={item.reply}
                                         positionY={item.positionY}
                                         handleScroll={handleScrollToMessage}
+                                        isYouTubeVideo={isYouTubeVideo}
+                                        setIsYouTubeVideo={setIsYouTubeVideo}
+                                        isOpenYouTubeVideo={isOpenYouTubeVideo}
+                                        setIsOpenYouTubeVideo={setIsOpenYouTubeVideo}
                                    ></DynamicMessage>
                               );
                          })
@@ -371,6 +390,12 @@ const ChatBox: React.FC<typeChatBox> = ({
                                    setIsModalOpen={setIsModalVideo}
                                    handleAddMessage={handleAddMessage}
                               ></InsertYVideo>
+                         ) : null}
+                         {isOpenYouTubeVideo ? (
+                              <YouTubeVideo
+                                   setIsOpenYouTubeVideo={setIsOpenYouTubeVideo}
+                                   isYouTubeVideo={isYouTubeVideo}
+                              ></YouTubeVideo>
                          ) : null}
                     </div>
                ) : null}

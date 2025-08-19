@@ -14,7 +14,12 @@ import { Chats, ChannelChat, GroupChat } from "../StateManagment/appSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "@/StateManagment/store";
 import { setDeleteContactFromChat } from "@/StateManagment/appSlice";
-import { useAddNewChatToPeopleByIdMutation } from "@/StateManagment/appApi";
+import {
+     useAddContactToChatMutation,
+     useAddNewChatToPeopleByIdMutation,
+     useDeleteChatFromUserMutation,
+     useDeleteUserFromChatMutation
+} from "@/StateManagment/appApi";
 type typeMember = {
      image: string;
      name: string;
@@ -57,6 +62,9 @@ const MemberItem: React.FC<typeMember> = ({
      const NewProfile = ProfileHOC({ WrappedComponent: Profile, edit: false });
      const dispatch: RootDispatch = useDispatch();
      const [addUser] = useAddNewChatToPeopleByIdMutation();
+     const [addContact] = useAddContactToChatMutation();
+     const [deleteUser] = useDeleteUserFromChatMutation();
+     const [deleteChat] = useDeleteChatFromUserMutation();
      const handleAddContact = async (chatID: string, contactID: string) => {
           if (targetChat) {
                const targetChatToDataBase: GroupChat | ChannelChat = {
@@ -91,13 +99,88 @@ const MemberItem: React.FC<typeMember> = ({
                          break;
                     }
                }
+               const responseChat = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
+                    {
+                         headers: { "Content-Type": "application/json" },
+                         method: "GET"
+                    }
+               );
+               let chatKey: string = "";
+               const parseResponseChat = await responseChat.json();
+               for (const [key, value] of Object.entries(parseResponseChat) as [string, Chats][]) {
+                    if (value.chatId === targetChat.chatId) {
+                         chatKey = key;
+                         break;
+                    }
+               }
+               await addContact({ chatId: chatKey, contact: member });
                await addUser({ chat: targetChatToDataBase, userId: userKey });
           } else {
                console.log(targetChat, "ЧААААААААААААААААААААААИ");
           }
      };
-     const handleDeleteContact = (chatID: string, contactID: string) => {
-          dispatch(setDeleteContactFromChat({ idChat: chatID, idContact: contactID }));
+     const handleDeleteContact = async (chatID: string, contactID: string) => {
+          if (targetChatID) {
+               let chatAndUserKey: [string, string] = ["", ""];
+               const respons = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
+                    {
+                         headers: { "Content-Type": "application/json" },
+                         method: "GET"
+                    }
+               );
+               const parseResponse = await respons.json();
+               for (const [key, value] of Object.entries(parseResponse) as [string, Chats][]) {
+                    if (value.chatId === chatID) {
+                         chatAndUserKey[0] = key;
+                         for (const [keyUser, users] of Object.entries(value.joinUsers!) as [
+                              string,
+                              UserInterfaceForJoinUsers
+                         ][]) {
+                              if (users.userId === contactID) {
+                                   chatAndUserKey[1] = keyUser;
+                                   break;
+                              }
+                         }
+                    }
+               }
+
+               const responseUsers = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
+                    {
+                         headers: { "Content-Type": "application/json" },
+                         method: "GET"
+                    }
+               );
+               const parseResponseUsers = await responseUsers.json();
+               const keys = {
+                    user: "",
+                    chat: ""
+               };
+               for (const [key, user] of Object.entries(parseResponseUsers) as [
+                    string,
+                    UserInterface
+               ][]) {
+                    if (user.userId === contactID) {
+                         keys["user"] = key;
+
+                         for (const [keyChat, chat] of Object.entries(user.userChats) as [
+                              string,
+                              Chats
+                         ][]) {
+                              if (chat.chatId === targetChatID) {
+                                   keys["chat"] = keyChat;
+                                   break;
+                              }
+                         }
+                    }
+               }
+               console.log(keys, "WWW");
+               await deleteUser({ chatId: chatAndUserKey[0], contactId: chatAndUserKey[1] });
+               await deleteChat({ userId: keys.user, chatId: keys.chat });
+               dispatch(setDeleteContactFromChat({ idChat: chatID, idContact: contactID }));
+          }
      };
      return (
           <div className="bigChatInfo__innerMembersInnerItem">

@@ -1,10 +1,8 @@
 "use client";
 import { Chats, UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
-import React, { Fragment, RefObject } from "react";
+import React, { RefObject } from "react";
 import { typeBoxMessageItem } from "./chatBoxMessageItem";
 import SearchPanelItem from "./searchPanelItem";
-import { useSelector } from "react-redux";
-import { RootState } from "@/StateManagment/store";
 
 type typeInput = {
      targetChat: Chats;

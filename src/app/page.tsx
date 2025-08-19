@@ -12,8 +12,6 @@ import "../style/_bigChat.scss";
 import ChatBox from "@/components/chat";
 import { Provider } from "react-redux";
 import store from "../StateManagment/store";
-import { RootState } from "../StateManagment/store";
-import { useSelector } from "react-redux";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 export default function Main() {
      const client = new ApolloClient({

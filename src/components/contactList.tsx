@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 import { UserInterfaceForJoinUsers } from "@/StateManagment/appSlice";
 
 import Link from "next/link";
-import { group } from "console";
 type typeContactMenu = {
      userIsDarkTheme: boolean;
      userThemeColorScheme: { dark: string[]; light: string[] };
@@ -16,7 +15,7 @@ type typeContactMenu = {
      isList: boolean;
      targetChatID: string;
      language: string;
-     targetChat: Chats;
+     targetChat?: Chats;
 };
 const ContactMenu: React.FC<typeContactMenu> = ({
      userIsDarkTheme,

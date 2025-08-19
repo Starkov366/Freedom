@@ -3,14 +3,14 @@ import React, { useRef } from "react";
 import app from "../../firebase";
 import "../../style/_autorization.scss";
 import { FaRegEye } from "react-icons/fa";
-import { BsGithub } from "react-icons/bs";
-import { useLazyQuery, gql, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, gql, useMutation } from "@apollo/client";
 import { setPasswordAndEmail } from "@/StateManagment/appSlice";
 import { setUserData } from "@/StateManagment/appSlice";
-import { UseSelector, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState, RootDispatch } from "@/StateManagment/store";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import { fetchUserData } from "@/StateManagment/appSlice";
 import type { UserInterface } from "@/StateManagment/appSlice";
 import {
      signInWithPopup,
@@ -21,7 +21,6 @@ import {
 } from "firebase/auth";
 import logo from "../../../public/icons/DeWatermark.ai_1748696872353 2.png";
 import { FaRegEyeSlash } from "react-icons/fa";
-import { data } from "react-router-dom";
 const ADD_USER = gql`
      mutation addUser($user: UserInterfaceInput!) {
           addUser(user: $user) {
@@ -269,6 +268,7 @@ const AutorizationPage = () => {
                     userToAdd.userThemeColorShceme = userData.userThemeColorShceme;
                     await dispatch(setUserData({ user: userToAdd }));
                     await localStorage.setItem("USERNAME", accountData.login);
+                    dispatch(fetchUserData());
                     router.push("/");
                } else {
                     if (login.current && password.current) {
@@ -403,6 +403,7 @@ const AutorizationPage = () => {
                               userThemeColorShceme: users.userThemeColorShceme
                          };
                          dispatch(setUserData({ user: userToAdd }));
+                         dispatch(fetchUserData());
                          await localStorage.setItem("USERNAME", result.user.displayName!);
                          router.push("/");
                     } else {
@@ -542,6 +543,7 @@ const AutorizationPage = () => {
                          dispatch(setUserData({ user: userToAdd }));
                          router.push("/");
                          await localStorage.setItem("USERNAME", result.user.displayName!);
+                         dispatch(fetchUserData());
                     } else {
                          if (login.current && password.current) {
                               login.current.style.border = "3px solid red";

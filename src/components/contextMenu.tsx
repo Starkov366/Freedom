@@ -6,6 +6,7 @@ import { MdContentCopy } from "react-icons/md";
 import { RootDispatch } from "@/StateManagment/store";
 import { useDispatch } from "react-redux";
 import { MdOutlineModeEdit } from "react-icons/md";
+import { UserInterface } from "@/StateManagment/appSlice";
 import { IoIosSave } from "react-icons/io";
 import { RiReplyFill } from "react-icons/ri";
 import {
@@ -14,6 +15,7 @@ import {
      setAddSavedMessage
 } from "@/StateManagment/appSlice";
 import { useSelector } from "react-redux";
+import { useSendMessageToSavedMutation } from "@/StateManagment/appApi";
 import { RootState } from "@/StateManagment/store";
 import { typeBoxMessageItem } from "./chatBoxMessageItem";
 type typeContext = {
@@ -35,6 +37,7 @@ type typeContext = {
      >;
      type: string;
      positionY: number;
+     userName: string;
 };
 const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
      (
@@ -53,11 +56,13 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
                language,
                setReplyMessage,
                type,
-               positionY
+               positionY,
+               userName
           },
           ref
      ) => {
           const dispatch: RootDispatch = useDispatch();
+          const [sendToSave] = useSendMessageToSavedMutation();
           const handleCopyValueMeassage = (event: React.MouseEvent<HTMLDivElement>) => {
                navigator.clipboard.writeText(value);
                event.currentTarget.style.background = "white";
@@ -75,18 +80,36 @@ const ContextMenu = React.forwardRef<HTMLDivElement | null, typeContext>(
           const handlePinnedMessage = (idChat: string, value: string) => {
                dispatch(setPinnedMessages({ idChat: idChat, value: value }));
           };
-          const handleAddSaveMessage = (
+          const handleAddSaveMessage = async (
                event: React.MouseEvent<HTMLDivElement>,
                message: typeBoxMessageItem
           ) => {
+               let userKey: string = "";
+               const users = await fetch(
+                    "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers.json",
+                    {
+                         method: "GET",
+                         headers: {
+                              "Content-Type": "application/json"
+                         }
+                    }
+               );
+               const readyUsers = await users.json();
+               for (const [key, val] of Object.entries(readyUsers)) {
+                    const value = val as UserInterface;
+                    if (value.userName === userName) {
+                         userKey = key;
+                         break;
+                    }
+               }
+               await sendToSave({ userId: userKey, newMesssage: message });
                dispatch(setAddSavedMessage({ message: message }));
                event.currentTarget.style.background = "#39e3d8";
           };
           const handleCreateReplyToMessage = (name: string, value: string, y: number) => {
                setReplyMessage ? setReplyMessage({ name: name, value: value, y: y }) : null;
           };
-          const userName = useSelector((store: RootState) => store.User.userName);
-          const tt = "edit";
+
           return (
                <div
                     ref={ref}

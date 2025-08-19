@@ -1,24 +1,27 @@
 "use client";
 import React from "react";
 import ChatWindow from "./chatWindow";
-import HeaderChatBox from "./headerChatBox";
-import ChatBox from "./chatBox";
 import MessageMenu from "./messageMenu";
 import Settings from "./settings";
-import Profile from "./profile";
 import { useDispatch } from "react-redux";
 import type { RootDispatch } from "../StateManagment/store";
 import { fetchUserData } from "@/StateManagment/appSlice";
-import CreateNewWindow from "./createNewWindow";
 import { UserInterface } from "@/StateManagment/appSlice";
 import { RootState } from "../StateManagment/store";
 import { shallowEqual, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-
+import { useGetTargetChatQuery } from "@/StateManagment/appApi";
 type typeChatBox = { user?: UserInterface; fullfield: boolean; language: string };
 const Chat: React.FC<typeChatBox> = ({ fullfield, language }) => {
-     const navigator = useRouter();
+     const navigatorM = useRouter();
      const [isOpen, setIsOpen] = React.useState<boolean>(false);
+
+     const { data: dataS, isLoading } = useGetTargetChatQuery(undefined, {
+          refetchOnMountOrArgChange: false,
+          refetchOnFocus: false,
+          pollingInterval: 0
+     });
+
      const [isSign, setIsSign] = React.useState<boolean>(false);
      const user = useSelector((store: RootState) => store.User, shallowEqual) as UserInterface;
      React.useEffect(() => {
@@ -43,7 +46,7 @@ const Chat: React.FC<typeChatBox> = ({ fullfield, language }) => {
                dispatch(fetchUserData()).then((response: any) => {
                     console.log(response, "OPOPPOP");
                     if (!response.payload) {
-                         navigator.push("/autorization");
+                         navigatorM.push("/autorization");
                     }
                });
           }

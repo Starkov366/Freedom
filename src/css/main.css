@@ -371,7 +371,32 @@ html {
   transition: all 0.5s ease normal;
 }
 .chatBox__itemYouTube {
-  margin-left: 100px;
+  margin-left: 300px;
+  width: 19vw;
+  height: 300px;
+  background-color: #bbbed1;
+  -webkit-transform: perspective(770px) rotateY(20deg) scale(0.9) rotateX(10deg);
+          transform: perspective(770px) rotateY(20deg) scale(0.9) rotateX(10deg);
+  border-radius: 10px;
+  opacity: 0.8;
+  -webkit-transition: 0.6s ease all;
+  transition: 0.6s ease all;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.chatBox__itemYouTube:hover {
+  -webkit-transform: perspective(800px) rotateY(-15deg) translateY(-20px) rotateX(10deg) scale(1.1);
+          transform: perspective(800px) rotateY(-15deg) translateY(-20px) rotateX(10deg) scale(1.1);
+  -webkit-filter: blur(0);
+          filter: blur(0);
+  opacity: 1;
 }
 .chatBox__itemRightInfo {
   width: 10%;
@@ -1011,6 +1036,52 @@ html {
     width: 12vw;
   }
 }
+.youTubeVideo {
+  position: fixed;
+  top: 100px;
+  left: 15vw;
+  width: 1000px;
+  height: 510px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  padding-left: 10px;
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #ffffff;
+  -webkit-box-shadow: 2px 2px 0.5em rgba(122, 122, 122, 0.55), inset 1px 1px 0 rgba(255, 255, 255, 0.9), inset -1px -1px 0 rgba(0, 0, 0, 0.34);
+          box-shadow: 2px 2px 0.5em rgba(122, 122, 122, 0.55), inset 1px 1px 0 rgba(255, 255, 255, 0.9), inset -1px -1px 0 rgba(0, 0, 0, 0.34);
+  border: 1px solid #dedede;
+  background: linear-gradient(-72deg, #dedede, #9c9b9b 16%, #dedede 21%, #ffffff 24%, #454545 27%, #dedede 36%, #ffffff 45%, #634b4b 60%, #dedede 72%, #a79b9b 80%, #dedede 84%, #c0bbbb);
+  border-radius: 15px;
+}
+.youTubeVideo__closeBtn {
+  width: 50px;
+  height: 50px;
+  margin: 0px 5px 0px 5px;
+  border-radius: 50%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background-color: #ffffff;
+}
+.youTubeVideo__closeBtn:hover {
+  background-color: rgb(173, 169, 169);
+}
+
 .headerChatBox {
   width: 100%;
   min-height: 85px;
@@ -2467,13 +2538,13 @@ html {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  -webkit-box-align: end;
-      -ms-flex-align: end;
-          align-items: end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  margin-left: 10px;
+  margin-left: 35vw;
   max-height: 80px;
   gap: 30px;
 }
@@ -2485,23 +2556,23 @@ html {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+}
+.profile__infoDescriptionInnerLabel {
+  max-height: 10px;
+  font-size: large;
+  font-weight: 650;
 }
 .profile__infoDescriptionInnerInput {
   border: none;
   outline: none;
   width: 170%;
   height: 30px;
-  margin-top: 10px;
+  margin-top: 5px;
   background-color: rgba(81, 88, 131, 0);
-  font-size: 20px;
-  text-align: center;
-  font-weight: 600;
+  font-size: 15px;
   border-bottom: 2px solid grey;
 }
 .profile__infoUserId {

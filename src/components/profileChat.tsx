@@ -1,5 +1,4 @@
 "use client";
-import { StaticImageData } from "next/image";
 import type { Chats } from "@/StateManagment/appSlice";
 import undefinedImages from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
 import undefinedIconDuo from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
@@ -44,7 +43,9 @@ const HeaderProfile: React.FC<typeHeaderProfile> = ({
                <div className="headerChatBox__profileCircle">
                     <img
                          style={{
-                              paddingBottom: type === "GROUP" || type === "CHANNEL" ? "20px" : ""
+                              paddingBottom:
+                                   type === "GROUP" || type === "CHANNEL" ? "20px" : "0px",
+                              marginTop: type === "DUO" ? "5px" : "0px"
                          }}
                          className="headerChatBox__profileImage"
                          src={
@@ -67,7 +68,7 @@ const HeaderProfile: React.FC<typeHeaderProfile> = ({
                               style={{
                                    width: "12px",
                                    height: "12px",
-                                   background: statusInfo ? "#5aff57" : "gray"
+                                   background: statusInfo ? "blue" : "blue"
                               }}
                               className="headerChatBox__status"
                          ></div>
@@ -86,11 +87,11 @@ const HeaderProfile: React.FC<typeHeaderProfile> = ({
                          <p className="headerChatBox__statusInfo">
                               {statusInfo
                                    ? language === "RUSSIAN"
-                                        ? "Онлайн"
-                                        : "Online"
+                                        ? "Недавно был в сети"
+                                        : "I was online recently"
                                    : language === "RUSSIAN"
-                                   ? `Был в сети: ${lastStatus.toString()}`
-                                   : `Was online: ${lastStatus.toString()}`}
+                                   ? `Недавно был в сети`
+                                   : `I was online recently`}
                          </p>
                     )}
                </div>

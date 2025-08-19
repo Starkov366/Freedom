@@ -3,7 +3,6 @@ import React, { RefObject } from "react";
 import ProfileHOC from "./profileHOC";
 import Profile from "./profileChat";
 import ProfileMain from "./profile";
-import back from "../../public/icons/background.png";
 import HeaderMessageMenu from "./messageHeaderMenu";
 import SearchInput from "./searchInput";
 import { Chats, UserInterface } from "@/StateManagment/appSlice";

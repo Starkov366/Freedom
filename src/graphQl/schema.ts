@@ -152,6 +152,12 @@ const typeDefs = gql`
           userIsDarkTheme: Boolean
           userLanguage: Language
      }
+     type Keys {
+          myKey: String
+          ownUserKey: String
+          myChatKey: String
+          ownChatKey: String
+     }
      type Mutation {
           addUser(user: UserInterfaceInput): UserInterface
           addContactToUser(
@@ -161,19 +167,24 @@ const typeDefs = gql`
                myContact: UserInterfaceForJoinUsersInput
           ): String
           sendNewDuoChatToUsers(chat: DuoChatInput, contactId: String, userId: String): String
+          updateChatDB(targetChat: JSON): String
+          updateDuoChat(ownUserId: String, myId: String, newChat: DuoChatInput): Keys
      }
      type Query {
           getUserById(userId: String): UserInterface
           getAllUsers: [UserInterface]
           getAllChats: JSON
+          getUpdateMessageMenu(userId: String, userChats: JSON): JSON
      }
      input ChatInfoInput {
           chatImage: String
           chatName: String
           chatDescription: String
+          pinnedMessage: [String]
           lastSendImg: String
           title: String
           lastUserName: String
+          chatId: String
           value: String
           lastMessageDate: String
           flagCheck: Boolean
@@ -223,7 +234,7 @@ const typeDefs = gql`
           chatOperation: Int
      }
      input UserInterfaceForJoinUsersInput {
-          userId: ID
+          userId: String
           userChatID: String
           userName: String
           userEmail: String

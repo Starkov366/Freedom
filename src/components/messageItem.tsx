@@ -39,7 +39,7 @@ const MessageItem: React.FC<typeMessage> = ({
      countMessagesNew
 }) => {
      return (
-          <Link style={{ textDecoration: "none", color: "black" }} href={chatId}>
+          <Link style={{ textDecoration: "none", color: "black" }} href={chatId ? chatId : "..."}>
                <div
                     style={{
                          color: userIsDarkTheme ? "white" : "black"
@@ -91,7 +91,7 @@ const MessageItem: React.FC<typeMessage> = ({
                               style={{ color: userIsDarkTheme ? "#ebebeb" : "grey" }}
                               className="messageMenu__itemInfoValue"
                          >
-                              {value.length != 0
+                              {value?.length != 0
                                    ? value?.length > 18
                                         ? value.slice(0, 17) + "..."
                                         : " " + value + messageImage

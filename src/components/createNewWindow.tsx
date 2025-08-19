@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
-import img from "../../public/icons/tv.png";
 import { MdAddPhotoAlternate } from "react-icons/md";
-import { File } from "buffer";
 import { useDispatch } from "react-redux";
 import { RootDispatch } from "@/StateManagment/store";
 import {
@@ -11,14 +9,14 @@ import {
      setEditGroup,
      Chats
 } from "@/StateManagment/appSlice";
-import type { UserInterface } from "@/StateManagment/appSlice";
-import undefinedIcon from "../../public/icons/icons8-облако-диалога-с-точками-96.png";
+import type { ChatInfo, UserInterface } from "@/StateManagment/appSlice";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/StateManagment/store";
 import { useSelector } from "react-redux";
 import {
      useAddNewGroupOrChannelChatMutation,
-     useAddNewChatToPeopleByIdMutation
+     useAddNewChatToPeopleByIdMutation,
+     useUpdateChatInfoMutation
 } from "@/StateManagment/appApi";
 import { ChannelChat } from "../StateManagment/appSlice";
 import { roles } from "@/StateManagment/appSlice";
@@ -49,6 +47,7 @@ const CreateNewWindow = ({
      const [addChat] = useAddNewGroupOrChannelChatMutation();
      const [addChatToPeople] = useAddNewChatToPeopleByIdMutation();
      const dispatch: RootDispatch = useDispatch();
+     const [updateInfo] = useUpdateChatInfoMutation();
      const router = useRouter();
      const inputRef = React.useRef<HTMLInputElement | null>(null);
      const [image, setImage] = React.useState<string>();
@@ -60,11 +59,23 @@ const CreateNewWindow = ({
                inputRef.current.click();
           }
      };
-     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+     const handleOnChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
           const image = event.target.files?.[0];
           if (image !== undefined) {
                const stringImage = URL.createObjectURL(image!);
-               setImage(stringImage);
+               const formData = new FormData();
+               formData.append("image", image);
+               const res = await fetch(
+                    `https://api.imgbb.com/1/upload?key=2322e95855d517dcba7efc53b86e7f6b`,
+                    {
+                         method: "POST",
+                         body: formData
+                    }
+               );
+               const ready = await res.json();
+               const link = ready.data.url as string;
+               setImage(link);
+               console.log(link, "ССЫЛКА");
                setIsFile(false);
           }
      };
@@ -272,12 +283,48 @@ const CreateNewWindow = ({
           }
           handleCloseModal(id, false);
      };
-     const handleEditGroup = (
+     const handleEditGroup = async (
           idChat: string,
           newImage: string,
           newName: string,
           newDescription: string
      ) => {
+          const responseChat = await fetch(
+               "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
+               {
+                    headers: { "Content-Type": "application/json" },
+                    method: "GET"
+               }
+          );
+          let chatKey: string = "";
+          const parseResponseChat = await responseChat.json();
+          for (const [key, value] of Object.entries(parseResponseChat) as [string, Chats][]) {
+               if (value.chatId === idChat) {
+                    chatKey = key;
+                    break;
+               }
+          }
+          const newInfo: ChatInfo = {
+               chatDescription: newDescription,
+               chatImage: newImage,
+               chatName: newName,
+               title: newName,
+               lastSendImg: newImage,
+               lastUserName: "SYSTEM: ",
+               lastMessageDate: new Date().toString(),
+               messageImage: newImage,
+               flagCheck: false,
+               value: "[ГРУППА ИЗМЕНЕНА]"
+          };
+          await fetch(
+               `https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats/${chatKey}/imagesChat.json`,
+               {
+                    headers: { "Content-Type": "application/json" },
+                    method: "PUT",
+                    body: JSON.stringify(newImage)
+               }
+          );
+          updateInfo({ chatId: chatKey, newInfo: newInfo });
           dispatch(
                setEditGroup({
                     idChat: idChat,

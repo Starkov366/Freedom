@@ -11,13 +11,8 @@ import type { UserInterface } from "@/StateManagment/appSlice";
 import { FaLanguage } from "react-icons/fa";
 import ProfileHOC from "./profileHOC";
 import Profile from "./profile";
-import img from "../../public/icons/background.png";
 import ContactMenu from "./contactList";
-import {
-     useChangeLanguageMutation,
-     useChangeThemeMutation,
-     useAddNewGroupOrChannelChatMutation
-} from "@/StateManagment/appApi";
+import { useChangeLanguageMutation, useChangeThemeMutation } from "@/StateManagment/appApi";
 import { useRouter } from "next/navigation";
 <div className="settings__savedMessages">
      <AiFillSave size={35} color="white"></AiFillSave>

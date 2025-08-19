@@ -5,10 +5,7 @@ import Profile from "./profile";
 import { useSelector } from "react-redux";
 import { RootState } from "../StateManagment/store";
 import { Chats } from "../StateManagment/appSlice";
-import { typeBoxMessageItem } from "./chatBoxMessageItem";
-import { useLazyQuery, gql, useMutation, useQuery } from "@apollo/client";
-import { ChatInfo } from "../StateManagment/appSlice";
-import { roles } from "../StateManagment/appSlice";
+import { gql, useQuery } from "@apollo/client";
 import type { UserInterfaceForJoinUsers } from "../StateManagment/appSlice";
 import GlobalContactSearch from "./globalContactsSearch";
 const GET_USERS = gql`
@@ -73,7 +70,7 @@ const HeaderMessageMenu = ({
           if (!searchValue.startsWith("@")) {
                setChats((prevState: Chats[]) => {
                     const newChats = prevState.filter((chat: Chats) => {
-                         return chat.info.title.includes(event.target.value);
+                         return chat?.info?.title?.includes(event.target.value);
                     });
 
                     return newChats;
@@ -89,7 +86,7 @@ const HeaderMessageMenu = ({
                               );
                          } else {
                               return !user.userChats.some((userContact: Chats) => {
-                                   return userContact.info.chatName === contact.info.chatName;
+                                   return userContact?.info?.chatName === contact.info.chatName;
                               });
                          }
                     }

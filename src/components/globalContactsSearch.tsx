@@ -129,7 +129,20 @@ const GlobalContactSearch: React.FC<typeSearch> = ({
                          userGroups: user.userGroups,
                          userDescription: user.userDescription
                     },
-                    two: contactWithoutTrash
+                    two: {
+                         userId: contactWithoutTrash.userId,
+                         userName: contactWithoutTrash.userName,
+                         userEmail: contactWithoutTrash.userEmail,
+                         userPassword: contactWithoutTrash.userPassword,
+                         userDateRegistred: contactWithoutTrash.userDateRegistred,
+                         userTelegramInfo: contactWithoutTrash.userTelegramInfo,
+                         userInstagramInfo: contactWithoutTrash.userInstagramInfo,
+                         userIsOnline: contactWithoutTrash.userIsOnline,
+                         userFriends: contactWithoutTrash.userFriends,
+                         userImage: contactWithoutTrash.userImage,
+                         userGroups: contactWithoutTrash.userGroups,
+                         userDescription: contactWithoutTrash.userDescription
+                    }
                },
                chatId: ID,
                chatDateInitialization: new Date().toString(),

@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { Chats, UserInterface } from "./appSlice";
+import type { Chats, UserInterface, UserInterfaceForJoinUsers } from "./appSlice";
+import { ChatInfo } from "./appSlice";
+import { typeBoxMessageItem } from "@/components/chatBoxMessageItem";
 export const appApi = createApi({
      reducerPath: "app",
      baseQuery: fetchBaseQuery({
@@ -75,8 +77,56 @@ export const appApi = createApi({
                     method: "POST",
                     body: JSON.stringify(payload.chat)
                })
+          }),
+          addContactToChat: builder.mutation({
+               query: (payload: { chatId: string; contact: UserInterfaceForJoinUsers }) => ({
+                    url: `freedomChats/${payload.chatId}/joinUsers.json`,
+                    method: "POST",
+                    body: JSON.stringify(payload.contact)
+               })
+          }),
+          deleteUserFromChat: builder.mutation({
+               query: (payload: { chatId: string; contactId: string }) => ({
+                    url: `freedomChats/${payload.chatId}/joinUsers/${payload.contactId}.json`,
+                    method: "DELETE"
+               })
+          }),
+          updateChatInfo: builder.mutation({
+               query: (payload: { chatId: string; newInfo: ChatInfo }) => ({
+                    url: `freedomChats/${payload.chatId}/info.json`,
+                    method: "PUT",
+                    body: JSON.stringify(payload.newInfo)
+               })
+          }),
+          deleteChatFromUser: builder.mutation({
+               query: (payload: { userId: string; chatId: string }) => ({
+                    url: `freedomUsers/${payload.userId}/userChats/${payload.chatId}.json`,
+                    method: "DELETE"
+               })
+          }),
+          sendMessageToSaved: builder.mutation({
+               query: (payload: { userId: string; newMesssage: typeBoxMessageItem }) => ({
+                    url: `freedomUsers/${payload.userId}/userChats/0/messages.json`,
+                    method: "POST",
+                    body: JSON.stringify(payload.newMesssage)
+               })
+          }),
+          getTargetChat: builder.query<Chats[], void>({
+               query: () => ({
+                    url: `freedomChats.json`,
+                    method: "GET"
+               })
+          }),
+          sendChatToSaved: builder.mutation({
+               query: (payload: { userId: string; newMesssages: typeBoxMessageItem[] }) => ({
+                    url: `freedomUsers/${payload.userId}/userChats/0/messages.json`,
+                    method: "PUT",
+                    body: JSON.stringify(payload.newMesssages)
+               })
           })
-     })
+     }),
+     keepUnusedDataFor: 60,
+     refetchOnMountOrArgChange: false
 });
 export const {
      useUpdateUserInfoImgMutation,
@@ -88,5 +138,12 @@ export const {
      useChangeThemeMutation,
      useChangeLanguageMutation,
      useAddNewGroupOrChannelChatMutation,
-     useAddNewChatToPeopleByIdMutation
+     useAddNewChatToPeopleByIdMutation,
+     useAddContactToChatMutation,
+     useDeleteUserFromChatMutation,
+     useUpdateChatInfoMutation,
+     useDeleteChatFromUserMutation,
+     useSendMessageToSavedMutation,
+     useGetTargetChatQuery,
+     useSendChatToSavedMutation
 } = appApi;

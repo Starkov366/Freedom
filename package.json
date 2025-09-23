@@ -4,9 +4,9 @@
      "private": true,
      "type": "module",
      "scripts": {
-          "dev": "next dev",
+          "dev": "ts-node --esm index.ts",
+          "start": "node --loader ts-node/esm index.ts",
           "build": "next build",
-          "start": "concurrently \"next start\" \"node --loader ts-node/esm src/graphQl/index.ts\"",
           "lint": "next lint"
      },
      "dependencies": {

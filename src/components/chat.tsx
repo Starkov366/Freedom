@@ -11,8 +11,14 @@ import { RootState } from "../StateManagment/store";
 import { shallowEqual, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useGetTargetChatQuery } from "@/StateManagment/appApi";
-type typeChatBox = { user?: UserInterface; fullfield: boolean; language: string };
-const Chat: React.FC<typeChatBox> = ({ fullfield, language }) => {
+type typeChatBox = {
+     user?: UserInterface;
+     fullfield: boolean;
+     language: string;
+     setIsProfileFlag: React.Dispatch<React.SetStateAction<boolean>>;
+     isProfileFlag: boolean;
+};
+const Chat: React.FC<typeChatBox> = ({ fullfield, language, setIsProfileFlag, isProfileFlag }) => {
      const navigatorM = useRouter();
      const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
@@ -22,7 +28,6 @@ const Chat: React.FC<typeChatBox> = ({ fullfield, language }) => {
           pollingInterval: 0
      });
 
-     const [isSign, setIsSign] = React.useState<boolean>(false);
      const user = useSelector((store: RootState) => store.User, shallowEqual) as UserInterface;
      React.useEffect(() => {
           const handleClose = (event: any) => {
@@ -62,6 +67,8 @@ const Chat: React.FC<typeChatBox> = ({ fullfield, language }) => {
                className="chatMain"
           >
                <ChatWindow
+                    isProfileFlag={isProfileFlag}
+                    setIsProfileFlag={setIsProfileFlag}
                     userIsDarkTheme={user.userIsDarkTheme}
                     userThemeColorScheme={user.userThemeColorShceme}
                     key={user?.userChats.length}

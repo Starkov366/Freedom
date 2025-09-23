@@ -38,6 +38,8 @@ type typeChatBox = {
      setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
      isOpen: boolean;
      language: string;
+     setIsProfileFlag: React.Dispatch<React.SetStateAction<boolean>>;
+     isProfileFlag: boolean;
 };
 const ChatWindow: React.FC<typeChatBox> = ({
      user,
@@ -46,7 +48,9 @@ const ChatWindow: React.FC<typeChatBox> = ({
      userThemeColorScheme,
      setIsOpen,
      isOpen,
-     language
+     language,
+     setIsProfileFlag,
+     isProfileFlag
 }) => {
      const id = useParams();
      const router = useRouter();
@@ -216,132 +220,131 @@ const ChatWindow: React.FC<typeChatBox> = ({
      }, [id.chatId, dispatch, dataS]);
 
      React.useEffect(() => {
-          (async () => {
-               if (!targetChat || !targetChat.chatId) return;
-               if (targetChat?.type === "GROUP" || targetChat?.type === "CHANNEL") {
-                    const { data } = await updateChatDB({ variables: { targetChat } });
-                    console.log(data, "обновление группы/канала");
-                    setkeys(data?.updateChat); // если нужно обновить состояние
-               } else if (targetChat?.type === "SAVED" && userKey.length > 1) {
-                    sendSaveMessage({ userId: userKey, newMesssages: targetChat.messages });
-               } else if (targetChat?.type === "DUO") {
-                    const targetChatWithoutTrash: DuoChat = {
-                         messages: targetChat.messages,
-                         pinnedMessage: targetChat.pinnedMessage || [],
-                         chatDateInitialization: targetChat.chatDateInitialization,
-                         chatOperation: targetChat.chatOperation,
-                         chatId: targetChat.chatId,
-                         imagesChat: targetChat.imagesChat,
-                         info: targetChat.info,
-                         type: targetChat.type,
-                         joinUsers: {
-                              one: {
-                                   userId: targetChat.joinUsers.one.userId,
-                                   userName: targetChat.joinUsers.one.userName,
-                                   userEmail: targetChat.joinUsers.one.userEmail,
-                                   userPassword: targetChat.joinUsers.one.userPassword,
-                                   userDateRegistred: targetChat.joinUsers.one.userDateRegistred,
-                                   userTelegramInfo: targetChat.joinUsers.one.userTelegramInfo,
-                                   userInstagramInfo: targetChat.joinUsers.one.userInstagramInfo,
-                                   userIsOnline: targetChat.joinUsers.one.userIsOnline,
-                                   userFriends: targetChat.joinUsers.one.userFriends,
-                                   userImage: targetChat.joinUsers.one.userImage,
-                                   userGroups: targetChat.joinUsers.one.userGroups,
-                                   userDescription: targetChat.joinUsers.one.userDescription,
-                                   userChatID: targetChat.joinUsers.one.userChatID,
-                                   userRole: targetChat.joinUsers.one.userRole
-                              },
-                              two: {
-                                   userId: targetChat.joinUsers.two.userId,
-                                   userName: targetChat.joinUsers.two.userName,
-                                   userEmail: targetChat.joinUsers.two.userEmail,
-                                   userPassword: targetChat.joinUsers.two.userPassword,
-                                   userDateRegistred: targetChat.joinUsers.two.userDateRegistred,
-                                   userTelegramInfo: targetChat.joinUsers.two.userTelegramInfo,
-                                   userInstagramInfo: targetChat.joinUsers.two.userInstagramInfo,
-                                   userIsOnline: targetChat.joinUsers.two.userIsOnline,
-                                   userFriends: targetChat.joinUsers.two.userFriends,
-                                   userImage: targetChat.joinUsers.two.userImage,
-                                   userGroups: targetChat.joinUsers.two.userGroups,
-                                   userDescription: targetChat.joinUsers.two.userDescription,
-                                   userChatID: targetChat.joinUsers.two.userChatID,
-                                   userRole: targetChat.joinUsers.two.userRole
+          if (!isProfileFlag) {
+               (async () => {
+                    if (!targetChat || !targetChat.chatId) return;
+                    if (targetChat?.type === "GROUP" || targetChat?.type === "CHANNEL") {
+                         const { data } = await updateChatDB({ variables: { targetChat } });
+                         console.log(data, "обновление группы/канала");
+                         setkeys(data?.updateChat);
+                    } else if (targetChat?.type === "SAVED" && userKey.length > 1) {
+                         sendSaveMessage({ userId: userKey, newMesssages: targetChat.messages });
+                    } else if (targetChat?.type === "DUO") {
+                         const targetChatWithoutTrash: DuoChat = {
+                              messages: targetChat.messages,
+                              pinnedMessage: targetChat.pinnedMessage || [],
+                              chatDateInitialization: targetChat.chatDateInitialization,
+                              chatOperation: targetChat.chatOperation,
+                              chatId: targetChat.chatId,
+                              imagesChat: targetChat.imagesChat,
+                              info: targetChat.info,
+                              type: targetChat.type,
+                              joinUsers: {
+                                   one: {
+                                        userId: targetChat.joinUsers.one.userId,
+                                        userName: targetChat.joinUsers.one.userName,
+                                        userEmail: targetChat.joinUsers.one.userEmail,
+                                        userPassword: targetChat.joinUsers.one.userPassword,
+                                        userDateRegistred:
+                                             targetChat.joinUsers.one.userDateRegistred,
+                                        userTelegramInfo: targetChat.joinUsers.one.userTelegramInfo,
+                                        userInstagramInfo:
+                                             targetChat.joinUsers.one.userInstagramInfo,
+                                        userIsOnline: targetChat.joinUsers.one.userIsOnline,
+                                        userFriends: targetChat.joinUsers.one.userFriends,
+                                        userImage: targetChat.joinUsers.one.userImage,
+                                        userGroups: targetChat.joinUsers.one.userGroups,
+                                        userDescription: targetChat.joinUsers.one.userDescription,
+                                        userChatID: targetChat.joinUsers.one.userChatID,
+                                        userRole: targetChat.joinUsers.one.userRole
+                                   },
+                                   two: {
+                                        userId: targetChat.joinUsers.two.userId,
+                                        userName: targetChat.joinUsers.two.userName,
+                                        userEmail: targetChat.joinUsers.two.userEmail,
+                                        userPassword: targetChat.joinUsers.two.userPassword,
+                                        userDateRegistred:
+                                             targetChat.joinUsers.two.userDateRegistred,
+                                        userTelegramInfo: targetChat.joinUsers.two.userTelegramInfo,
+                                        userInstagramInfo:
+                                             targetChat.joinUsers.two.userInstagramInfo,
+                                        userIsOnline: targetChat.joinUsers.two.userIsOnline,
+                                        userFriends: targetChat.joinUsers.two.userFriends,
+                                        userImage: targetChat.joinUsers.two.userImage,
+                                        userGroups: targetChat.joinUsers.two.userGroups,
+                                        userDescription: targetChat.joinUsers.two.userDescription,
+                                        userChatID: targetChat.joinUsers.two.userChatID,
+                                        userRole: targetChat.joinUsers.two.userRole
+                                   }
                               }
-                         }
-                    };
-
-                    const { data } = await updateDuoChat({
-                         variables: {
-                              ownUserId: ownUser.userId,
-                              myId: user.userId,
-                              newChat: targetChatWithoutTrash
-                         }
-                    });
-                    console.log(data.updateDuoChat, "нууу пжжж");
-                    keyRefs.current = data?.updateDuoChat;
-                    setkeys(data?.updateDuoChat);
-               }
-          })();
+                         };
+                         const { data } = await updateDuoChat({
+                              variables: {
+                                   ownUserId: ownUser.userId,
+                                   myId: user.userId,
+                                   newChat: targetChatWithoutTrash
+                              }
+                         });
+                         console.log(data.updateDuoChat, "нууу пжжж");
+                         keyRefs.current = data?.updateDuoChat;
+                         setkeys(data?.updateDuoChat);
+                    }
+               })();
+          }
      }, [targetChat, userKey, id.chatId]);
      const currentTargetChatRef = React.useRef(targetChat);
      React.useEffect(() => {
-          if (targetChat?.type !== "SAVED" && targetChat?.type !== "DUO") {
-               const idd = id.chatId as string;
-
-               const inter = setInterval(async () => {
-                    refetch();
-                    const response = await fetch(
-                         "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
-                         {
-                              headers: { "Content-Type": "application/json" },
-                              method: "GET"
+          if (!isProfileFlag) {
+               if (targetChat?.type !== "SAVED" && targetChat?.type !== "DUO") {
+                    const idd = id.chatId as string;
+                    const inter = setInterval(async () => {
+                         refetch();
+                         const response = await fetch(
+                              "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
+                              { headers: { "Content-Type": "application/json" }, method: "GET" }
+                         );
+                         const data = await response.json();
+                         const chats = Object.values(data);
+                         const targetChatNew: any = chats.find(
+                              (chat: any) => chat?.chatId === id.chatId
+                         );
+                         const currentMessages = currentTargetChatRef.current?.messages || [];
+                         const newMessages = targetChatNew?.messages || [];
+                         if (JSON.stringify(currentMessages) !== JSON.stringify(newMessages)) {
+                              dispatch(setDataByChatId({ ID: idd, newChat: targetChatNew }));
                          }
-                    );
-                    const data = await response.json();
-                    const chats = Object.values(data);
-                    const targetChatNew: any = chats.find(
-                         (chat: any) => chat?.chatId === id.chatId
-                    );
-
-                    const currentMessages = currentTargetChatRef.current?.messages || [];
-                    const newMessages = targetChatNew?.messages || [];
-
-                    if (JSON.stringify(currentMessages) !== JSON.stringify(newMessages)) {
-                         dispatch(setDataByChatId({ ID: idd, newChat: targetChatNew }));
-                    }
-               }, 5000);
-
-               return () => clearInterval(inter);
+                    }, 20000);
+                    return () => clearInterval(inter);
+               }
           }
      }, []);
-
      React.useEffect(() => {
-          if (targetChat?.type === "DUO" && keys) {
-               const idd = id.chatId as string;
-               const inter = setInterval(async () => {
-                    refetch();
-                    console.log(keyRefs.current, keys, "КЛЮЧИКИ");
-                    const response = await fetch(
-                         `https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers/${keys.myKey}/userChats/${keys.myChatKey}.json`,
-                         {
-                              headers: { "Content-Type": "application/json" },
-                              method: "GET"
-                         }
-                    );
-                    const targetChatNew = await response.json();
-
-                    const currentMessages = currentTargetChatRef.current?.messages || [];
-                    const newMessages = targetChatNew?.messages || [];
-                    console.log(targetChatNew, "НОВЫЙ");
-                    targetChatNew.pinnedMessage = targetChatNew?.pinnedMessage || [];
-                    if (JSON.stringify(currentMessages) !== JSON.stringify(newMessages)) {
-                         dispatch(
-                              setDataByChatId({ ID: id.chatId as string, newChat: targetChatNew })
+          if (!isProfileFlag) {
+               if (targetChat?.type === "DUO" && keys) {
+                    const idd = id.chatId as string;
+                    const inter = setInterval(async () => {
+                         refetch();
+                         console.log(keyRefs.current, keys, "КЛЮЧИКИ");
+                         const response = await fetch(
+                              `https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomUsers/${keys.myKey}/userChats/${keys.myChatKey}.json`,
+                              { headers: { "Content-Type": "application/json" }, method: "GET" }
                          );
-                    }
-               }, 5000);
-
-               return () => clearInterval(inter);
+                         const targetChatNew = await response.json();
+                         const currentMessages = currentTargetChatRef.current?.messages || [];
+                         const newMessages = targetChatNew?.messages || [];
+                         console.log(targetChatNew, "НОВЫЙ");
+                         targetChatNew.pinnedMessage = targetChatNew?.pinnedMessage || [];
+                         if (JSON.stringify(currentMessages) !== JSON.stringify(newMessages)) {
+                              dispatch(
+                                   setDataByChatId({
+                                        ID: id.chatId as string,
+                                        newChat: targetChatNew
+                                   })
+                              );
+                         }
+                    }, 20000);
+                    return () => clearInterval(inter);
+               }
           }
      }, [keys]);
 

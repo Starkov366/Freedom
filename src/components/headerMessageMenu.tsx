@@ -182,7 +182,9 @@ const HeaderMessageMenu = ({
                     ) : null}
                </div>
                <button
-                    onClick={() => setProfileOpen(!profileOpen)}
+                    onClick={() => {
+                         setProfileOpen(!profileOpen);
+                    }}
                     className="headerMessageMenu__profile"
                ></button>
                {profileOpen && (
@@ -192,8 +194,6 @@ const HeaderMessageMenu = ({
                          key={Math.random()}
                          email={user.userEmail}
                          name={user.userName}
-                         countFriends={0}
-                         countGroups={user.userGroups}
                          description={user.userDescription}
                          userId={user.userId}
                          telegram={user.userTelegramInfo}

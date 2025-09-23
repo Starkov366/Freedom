@@ -20,15 +20,13 @@ import {
 import { RootState, RootDispatch } from "@/StateManagment/store";
 import { useDispatch } from "react-redux";
 import { MdAddPhotoAlternate } from "react-icons/md";
-import { UserInterface, setUpdateUserInfo } from "@/StateManagment/appSlice";
+import { UserInterface, setUpdateFlag, setUpdateUserInfo } from "@/StateManagment/appSlice";
 
 import imageAnonym from "../../public/icons/6139.jpg";
 type ProfileProps = {
      setProfileOpen: React.Dispatch<React.SetStateAction<boolean>>;
      setEdit?: React.Dispatch<React.SetStateAction<boolean>>;
      name: string;
-     countFriends: number;
-     countGroups: number;
      description: string;
      userId: string;
      img: string;
@@ -42,6 +40,8 @@ type ProfileProps = {
      userThemeColorScheme: { dark: string[]; light: string[] };
      type?: string;
      language: string;
+     setIsProfileFlag?: React.Dispatch<React.SetStateAction<boolean>>;
+     isProfileFlag?: boolean;
 };
 enum TYPES {
      "description" = "description",
@@ -55,8 +55,6 @@ const Profile = React.memo(
      ({
           setProfileOpen,
           name,
-          countFriends,
-          countGroups,
           description,
           userId,
           email,
@@ -69,7 +67,8 @@ const Profile = React.memo(
           img,
           userIsDarkTheme,
           userThemeColorScheme,
-          language
+          language,
+          setIsProfileFlag
      }: ProfileProps) => {
           const file = useRef<HTMLInputElement | null>(null);
           const [updateUserInfoT] = useUpdateUserInfoTelegramMutation();
@@ -201,7 +200,11 @@ const Profile = React.memo(
 
                asyncUpdate();
           }, [values]);
-
+          React.useEffect(() => {
+               if (setIsProfileFlag) {
+                    return () => setIsProfileFlag(false);
+               }
+          }, []);
           return (
                <div
                     className="profile"
@@ -258,13 +261,11 @@ const Profile = React.memo(
                                    {language === "RUSSIAN"
                                         ? "Количество контактов: "
                                         : "Count of contacts: "}
-                                   {countFriends}
                               </span>
                               <span className="profile__topInfoFooterGroups">
                                    {language === "RUSSIAN"
                                         ? "Количество групп: "
                                         : "Count of groups: "}{" "}
-                                   {countGroups}
                               </span>
                          </div>
                     </div>

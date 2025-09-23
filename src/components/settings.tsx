@@ -35,14 +35,14 @@ const Settings: React.FC<setting> = ({ userIsDarkTheme, userThemeColorScheme, la
      };
      const [updateTheme] = useChangeThemeMutation();
      const [updateLanguage] = useChangeLanguageMutation();
-
+     const [isProfile, setIsProfile] = React.useState<boolean>(false);
      const dispatch: RootDispatch = useDispatch();
-     const ownUser = useSelector((store: RootState) => store.User);
+     const user = useSelector((store: RootState) => store.User);
+     const [ownUser, setOwnUser] = React.useState(user);
      const userLanguage = useSelector((store: RootState) => store.User.userLanguage);
      const userImage = useSelector((store: RootState) => store.User.userImage);
      const userName = useSelector((store: RootState) => store.User.userName);
      const userEmail = useSelector((store: RootState) => store.User.userEmail);
-     const [isProfile, setIsProfile] = React.useState<boolean>(false);
      const [isContactMenuOpen, setIsContactMenuOpen] = React.useState<boolean>(false);
      const router = useRouter();
      const [isCreateWindow, setIsCreateWindow] = React.useState<{
@@ -55,7 +55,7 @@ const Settings: React.FC<setting> = ({ userIsDarkTheme, userThemeColorScheme, la
           edit: edit
      });
      const handleOpenProfile = (event: React.MouseEvent<HTMLDivElement>) => {
-          event.stopPropagation(), setIsProfile((prev: boolean) => !prev);
+          event.stopPropagation(), setIsProfile((prev: boolean) => true);
      };
      const handleToggleTheme = (event: React.MouseEvent<HTMLDivElement>) => {
           dispatch(setTheme({ userIsDarkTheme: !userIsDarkTheme }));
@@ -281,8 +281,6 @@ const Settings: React.FC<setting> = ({ userIsDarkTheme, userThemeColorScheme, la
                          key={Math.random()}
                          email={ownUser.userEmail}
                          name={ownUser.userName}
-                         countFriends={0}
-                         countGroups={ownUser.userGroups}
                          description={ownUser.userDescription}
                          userId={ownUser.userId}
                          telegram={ownUser.userTelegramInfo}

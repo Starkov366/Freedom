@@ -6,7 +6,7 @@
      "scripts": {
           "dev": "next dev",
           "build": "next build",
-          "start": "next start",
+          "start": "concurrently \"next start\" \"node --loader ts-node/esm src/graphQl/index.ts\"",
           "lint": "next lint"
      },
      "dependencies": {
@@ -31,8 +31,10 @@
           "@types/node": "^20.19.8",
           "@types/react": "^19",
           "@types/react-dom": "^19",
+          "concurrently": "^9.2.1",
           "eslint": "^9",
           "eslint-config-next": "15.3.3",
+          "ts-node": "^10.9.2",
           "typescript": "^5.8.3"
      }
 }

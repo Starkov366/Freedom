@@ -101,6 +101,7 @@ export interface UserInterface {
      userThemeColorShceme: { dark: string[]; light: string[] };
      userIsDarkTheme: boolean;
      userLanguage: "ENGLISH" | "RUSSIAN";
+     updateFlag?: boolean;
 }
 
 export const fetchUserData = createAsyncThunk("getData", async () => {
@@ -165,6 +166,7 @@ export const mainState: UserInterface = {
      userInstagramInfo: "no",
      userIsOnline: true,
      userContacts: [],
+     updateFlag: true,
      userFriends: ["wewfwef", "qwdqwdqwd", "dwqwdqw"],
      userImage:
           "https://go.zvuk.com/thumb/1000x0/filters:quality(75)/imgs/2024/09/06/11/6585601/a2ec1c8ed5d94b754598085c33428b043fe6507b.jpg",
@@ -929,6 +931,9 @@ const User = createSlice({
                state.userThemeColorShceme = user.userThemeColorShceme;
                state.userIsDarkTheme = user.userIsDarkTheme;
                state.userLanguage = user.userLanguage;
+          },
+          setUpdateFlag: (state, action: PayloadAction<{ flag: boolean }>) => {
+               state.updateFlag = action.payload.flag;
           }
      }
 });
@@ -956,6 +961,7 @@ export const {
      setJoinToGroupAndChannel,
      setPositionYToMessage,
      setPasswordAndEmail,
-     setUserData
+     setUserData,
+     setUpdateFlag
 } = User.actions;
 export default User.reducer;

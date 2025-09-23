@@ -42,6 +42,8 @@ type ProfileProps = {
      language: string;
      setIsProfileFlag?: React.Dispatch<React.SetStateAction<boolean>>;
      isProfileFlag?: boolean;
+     countFriends?: number;
+     countGroups?: number;
 };
 enum TYPES {
      "description" = "description",

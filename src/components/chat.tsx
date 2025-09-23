@@ -15,8 +15,8 @@ type typeChatBox = {
      user?: UserInterface;
      fullfield: boolean;
      language: string;
-     setIsProfileFlag: React.Dispatch<React.SetStateAction<boolean>>;
-     isProfileFlag: boolean;
+     setIsProfileFlag?: React.Dispatch<React.SetStateAction<boolean>>;
+     isProfileFlag?: boolean;
 };
 const Chat: React.FC<typeChatBox> = ({ fullfield, language, setIsProfileFlag, isProfileFlag }) => {
      const navigatorM = useRouter();
@@ -67,8 +67,8 @@ const Chat: React.FC<typeChatBox> = ({ fullfield, language, setIsProfileFlag, is
                className="chatMain"
           >
                <ChatWindow
-                    isProfileFlag={isProfileFlag}
-                    setIsProfileFlag={setIsProfileFlag}
+                    isProfileFlag={isProfileFlag!}
+                    setIsProfileFlag={setIsProfileFlag!}
                     userIsDarkTheme={user.userIsDarkTheme}
                     userThemeColorScheme={user.userThemeColorShceme}
                     key={user?.userChats.length}

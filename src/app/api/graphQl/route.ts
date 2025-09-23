@@ -4,6 +4,12 @@ import resolvers from "../../../graphQl/resolvers";
 import typeDefs from "../../../graphQl/schema";
 
 const server = new ApolloServer({ typeDefs, resolvers });
+const handler = startServerAndCreateNextHandler(server);
 
-export const GET = startServerAndCreateNextHandler(server);
-export const POST = startServerAndCreateNextHandler(server);
+export async function GET(req: Request) {
+     return handler(req);
+}
+
+export async function POST(req: Request) {
+     return handler(req);
+}

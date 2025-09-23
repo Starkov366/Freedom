@@ -17,7 +17,7 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import { RootState } from "../../StateManagment/store";
 export default function Main() {
      const client = new ApolloClient({
-          uri: "http://localhost:4000/",
+          uri: "/api/graphql",
           cache: new InMemoryCache()
      });
      return (

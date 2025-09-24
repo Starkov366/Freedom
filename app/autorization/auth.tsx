@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef } from "react";
-import app from "../../firebase";
+import app from "../../src/firebase";
 import "../../style/_autorization.scss";
 import { FaRegEye } from "react-icons/fa";
 import { useLazyQuery, gql, useMutation } from "@apollo/client";

@@ -11,10 +11,10 @@ import "../../style/_bigChat.scss";
 import "../../style/_createNewWindow.scss";
 import ChatBox from "@/components/chat";
 import { Provider } from "react-redux";
-import store from "../../StateManagment/store";
+import store from "../../src/StateManagment/store";
 import { useSelector } from "react-redux";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { RootState } from "../../StateManagment/store";
+import { RootState } from "../../src/StateManagment/store";
 export default function Main() {
      const client = new ApolloClient({
           uri: "/api/graphql",

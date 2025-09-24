@@ -1,8 +1,7 @@
-const nextConfig = {
-     experimental: {
-          appDir: true
-     },
-     srcDir: "src"
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+     reactStrictMode: true
 };
 
-module.exports = nextConfig;
+export default nextConfig;

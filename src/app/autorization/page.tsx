@@ -1,6 +1,6 @@
 "use client";
 import AutorizationPage from "./auth";
-import store from "../../src/StateManagment/store";
+import store from "../../StateManagment/store";
 import { Provider } from "react-redux";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 export default function Main() {

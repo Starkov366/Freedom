@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 export default function Main() {
      const client = new ApolloClient({
-          uri: "http://localhost:4000/",
+          uri: "/api/graphql",
           cache: new InMemoryCache()
      });
      return (

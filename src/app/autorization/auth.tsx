@@ -218,6 +218,7 @@ const AutorizationPage = () => {
                                    password: accountData.password
                               })
                          );
+                         userToAdd.userId = userToAdd.userName;
                          await dispatch(setUserData({ user: userToAdd }));
                          await handlePostUserData(userToAdd);
 

@@ -313,7 +313,7 @@ const ChatWindow: React.FC<typeChatBox> = ({
                          if (JSON.stringify(currentMessages) !== JSON.stringify(newMessages)) {
                               dispatch(setDataByChatId({ ID: idd, newChat: targetChatNew }));
                          }
-                    }, 20000);
+                    }, 15000);
                     return () => clearInterval(inter);
                }
           }

@@ -54,7 +54,7 @@ const MessageMenu = ({
                } catch (error) {
                     console.error(error);
                }
-          }, 30000);
+          }, 15000);
 
           return () => clearInterval(updateInterval);
      }, [userId, mess]);

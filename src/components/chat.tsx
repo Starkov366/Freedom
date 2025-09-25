@@ -46,17 +46,23 @@ const Chat: React.FC<typeChatBox> = ({ fullfield, language, setIsProfileFlag, is
      }, []);
      const dispatch: RootDispatch = useDispatch();
      React.useEffect(() => {
-          const name: string | null = localStorage.getItem("USERNAME");
+          if (typeof window === "undefined") return;
+
+          const name = localStorage.getItem("USERNAME");
+
+          if (!name) {
+               navigatorM.push("/autorization");
+               return;
+          }
+
           if (user.userName !== name) {
                dispatch(fetchUserData()).then((response: any) => {
-                    console.log(response, "OPOPPOP");
                     if (!response.payload) {
                          navigatorM.push("/autorization");
                     }
                });
           }
      }, []);
-
      return (
           <div
                style={{

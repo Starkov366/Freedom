@@ -345,20 +345,23 @@ const resolvers = {
           },
           getUpdateMessageMenu: async (_: any, args: { userId: string; userChats: Chats[] }) => {
                let userKey: string = "";
+               let userChats: Chats[];
                const res = await fetch(URL + "freedomUsers.json", {
                     headers: { "Content-Type": "application/json" },
                     method: "GET"
                });
+
                const ready = await res.json();
                for (const [key, value] of Object.entries(ready) as [string, UserInterface][]) {
                     if (value.userId === args.userId) {
                          userKey = key;
+                         userChats = value.userChats;
                          break;
                     }
                }
                const newUserChats: Chats[] = [];
 
-               for (const chat of args.userChats) {
+               for (const chat of userChats!) {
                     if (chat.type === "DUO") {
                          const res = await fetch(`${URL}freedomUsers/${userKey}/userChats.json`, {
                               headers: { "Content-Type": "application/json" },

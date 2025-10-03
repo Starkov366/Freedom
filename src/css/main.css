@@ -1170,8 +1170,9 @@ html {
           justify-content: center;
 }
 .headerChatBox__name {
-  font-size: 22px;
+  font-size: 20px;
   margin-left: 10px;
+  width: 280px;
   margin-top: 4px;
 }
 .headerChatBox__statusInfo {

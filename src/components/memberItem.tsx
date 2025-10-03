@@ -114,8 +114,9 @@ const MemberItem: React.FC<typeMember> = ({
                          break;
                     }
                }
-               await addContact({ chatId: chatKey, contact: member });
+
                await addUser({ chat: targetChatToDataBase, userId: userKey });
+               // тут было еще addContact
           } else {
                console.log(targetChat, "ЧААААААААААААААААААААААИ");
           }
@@ -123,6 +124,7 @@ const MemberItem: React.FC<typeMember> = ({
      const handleDeleteContact = async (chatID: string, contactID: string) => {
           if (targetChatID) {
                let chatAndUserKey: [string, string] = ["", ""];
+
                const respons = await fetch(
                     "https://telegrambotfishcombat-default-rtdb.firebaseio.com/freedomChats.json",
                     {

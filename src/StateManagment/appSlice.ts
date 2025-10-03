@@ -5,6 +5,7 @@ import { RootState } from "./store";
 import { headers } from "next/headers";
 import { useRouter } from "next/navigation";
 import { FORMERR } from "dns";
+import { isArray } from "@apollo/client/utilities";
 
 export type ChatInfo = {
      chatImage: string;
@@ -348,7 +349,9 @@ const User = createSlice({
                               return {
                                    messages: chat.messages,
                                    chatOperation: chat.chatOperation,
-                                   joinUsers: [...chat.joinUsers!],
+                                   joinUsers: Array.isArray(chat.joinUsers)
+                                        ? [...chat.joinUsers]
+                                        : [chat.joinUsers],
 
                                    chatId: chat.chatId,
                                    chatDateInitialization: chat.chatDateInitialization,

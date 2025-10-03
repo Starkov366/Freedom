@@ -31,11 +31,7 @@ const MessageMenu = ({
      const [chats, setChats] = React.useState<Chats[]>(mess!);
      const [value, setValue] = React.useState<string>("");
      const [getUpdateMessageMenu, { data, loading, error, refetch }] = useLazyQuery(GET_CHATS);
-     React.useEffect(() => {
-          if (JSON.stringify(chats) !== JSON.stringify(mess)) {
-               setChats(mess);
-          }
-     }, [mess]);
+
      const [isUpdate, setIsUpdate] = React.useState<boolean>(true);
      React.useEffect(() => {
           const updateInterval = setInterval(async () => {

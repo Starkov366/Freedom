@@ -34,6 +34,11 @@ const MessageMenu = ({
 
      const [isUpdate, setIsUpdate] = React.useState<boolean>(true);
      React.useEffect(() => {
+          if (JSON.stringify(chats) !== JSON.stringify(mess)) {
+               setChats(mess);
+          }
+     }, [mess]);
+     React.useEffect(() => {
           const updateInterval = setInterval(async () => {
                try {
                     const { data } = await getUpdateMessageMenu({
@@ -53,7 +58,7 @@ const MessageMenu = ({
           }, 15000);
 
           return () => clearInterval(updateInterval);
-     }, [userId, mess]);
+     }, [userId]);
 
      return (
           <div

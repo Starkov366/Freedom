@@ -271,21 +271,21 @@
           flex-shrink: 0;
           transition: all 0.5s ease normal;
           &YouTube {
-               margin-left: 300px;
                width: 19vw;
-               height: 300px;
+               height: 50px;
                background-color: #bbbed1;
                transform: perspective(770px) rotateY(20deg) scale(0.9) rotateX(10deg);
                border-radius: 10px;
                opacity: 0.8;
                transition: 0.6s ease all;
                display: flex;
+               margin-right: 15px;
                align-items: center;
                justify-content: center;
           }
 
           &YouTube:hover {
-               transform: perspective(800px) rotateY(-15deg) translateY(-20px) rotateX(10deg)
+               transform: perspective(800px) rotateY(-15deg) translateY(-5px) rotateX(10deg)
                     scale(1.1);
                filter: blur(0);
                opacity: 1;

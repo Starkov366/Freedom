@@ -271,7 +271,28 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                                         : handleIsLink(value)}
                               </div>
                          </div>
+                         {value
+                              .split(" ")
+                              .some((word: string) => word.includes("https://www.youtube.com")) && (
+                              <div
+                                   className="chatBox__itemYouTube"
+                                   onClick={() => {
+                                        setIsOpenYouTubeVideo!((prev) => !prev);
+                                        value.split(" ").forEach((word: string) => {
+                                             if (word.includes("https://www.youtube.com")) {
+                                                  const srcForPlayer =
+                                                       word.slice(0, 24) +
+                                                       "embed/" +
+                                                       word.slice(32);
 
+                                                  setIsYouTubeVideo!(srcForPlayer);
+                                             }
+                                        });
+                                   }}
+                              >
+                                   <GrYoutube size={70} color="red"></GrYoutube>
+                              </div>
+                         )}
                          <div className="chatBox__itemRightInfo">
                               <div
                                    onClick={() => handlLikeMessage()}
@@ -362,30 +383,6 @@ export const ChatBoxMessageItem = forwardRef<HTMLDivElement, typeBoxMessageItem>
                               userName={user.userName}
                          ></ContextMenu>
                     ) : null}
-
-                    {value
-                         .split(" ")
-                         .some((word: string) => word.includes("https://www.youtube.com")) && (
-                         <div
-                              style={{
-                                   marginLeft: `${user.userName === author ? "72.5%" : "0px"}`
-                              }}
-                              className="chatBox__itemYouTube"
-                              onClick={() => {
-                                   setIsOpenYouTubeVideo!((prev) => !prev);
-                                   value.split(" ").forEach((word: string) => {
-                                        if (word.includes("https://www.youtube.com")) {
-                                             const srcForPlayer =
-                                                  word.slice(0, 24) + "embed/" + word.slice(32);
-
-                                             setIsYouTubeVideo!(srcForPlayer);
-                                        }
-                                   });
-                              }}
-                         >
-                              <GrYoutube size={70} color="red"></GrYoutube>
-                         </div>
-                    )}
                </>
           );
      }

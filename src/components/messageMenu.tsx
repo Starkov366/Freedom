@@ -86,7 +86,7 @@ const MessageMenu = ({
                          <span className="messageMenu__innerLabel">Local search:</span>
                     ) : null}
 
-                    {chats.map((item: Chats, index: number) => {
+                    {[...chats].reverse().map((item: Chats, index: number) => {
                          const newMessagesCount: number = item?.messages?.reduce((acc, curr) => {
                               if (curr.checkFlag === false && curr.author !== userName) {
                                    return acc + 1;

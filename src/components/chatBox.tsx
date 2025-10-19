@@ -170,7 +170,7 @@ const ChatBox: React.FC<typeChatBox> = ({
                     const newObject: typeBoxMessageItem = {
                          value: URL!,
                          date: new Date().toString(),
-                         author: "Starkov",
+                         author: user.userName,
                          checkFlag: false,
                          isLike: false,
                          image: chatImg,
@@ -213,7 +213,7 @@ const ChatBox: React.FC<typeChatBox> = ({
      };
      React.useEffect(() => {
           if (container.current) {
-               container.current.scrollTop = container.current.scrollHeight - 100;
+               container.current.scrollTop = container.current.scrollHeight;
           }
           console.log("Сообщения изменены..");
      }, [chatMessages]);

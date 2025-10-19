@@ -258,6 +258,7 @@ const Profile = React.memo(
 
                               <p className="profile__topInfoMainName">{name}</p>
                          </div>
+                         {/*
                          <div className="profile__topInfoFooter">
                               <span className="profile__topInfoFooterFriends">
                                    {language === "RUSSIAN"
@@ -270,6 +271,7 @@ const Profile = React.memo(
                                         : "Count of groups: "}{" "}
                               </span>
                          </div>
+    */}
                     </div>
                     <div className="profile__info">
                          <div className="profile__infoDescription">
